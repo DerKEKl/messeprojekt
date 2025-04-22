@@ -1,0 +1,13 @@
+{
+  "name": "messeprojekt",
+  "version": "1.0.0",
+  "description": "Backend",
+  "main": "index.js",
+  "keywords": [],
+  "authors": ["","",""],
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.1.0",
+    "dotenv": "^16.5.0"
+}
