@@ -1,24 +1,134 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+##### Serverless
+.serverless
 
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+##### Windows
+# Windows system files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
 
-# Node
-/node_modules
-npm-debug.log
-yarn-error.log
+# Dump file
+*.stackdump
 
-# IDEs and editors
+# Folder core file
+[Dd]esktop.ini
+
+# Recycle Bin on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+##### Linux
+# Temporary files
+*~
+.fuse_hidden*
+
+# Directory preferences
+.directory
+
+# Trash and NFS files
+.Trash-*
+.nfs*
+
+##### MacOS
+# General system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Thumbnails and cache
+._*
+
+# Volume files
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Remote AFP share directories
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+##### Backup Files
+*.bak
+*.gho
+*.ori
+*.orig
+*.tmp
+
+##### GPG
+secring.*
+
+##### Cloud Storage
+# Dropbox
+.dropbox
+.dropbox.attr
+.dropbox.cache
+
+##### Simulation and Logs
+# Synopsys VCS
+*.vcd
+*.vpd
+*.evcd
+*.fsdb
+simv
+simv.daidir/
+simv.db.dir/
+simv.vdb/
+urgReport/
+DVEfiles/
+ucli.key
+vc_hdrs.h
+
+##### Version Control
+# SVN
+.svn/
+
+#### Jetbrains
 .idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+
+# Mercurial
+.hg/
+.hgignore
+.hgsigs
+.hgsub
+.hgsubstate
+.hgtags
+
+# Bazaar
+.bzr/
+.bzrignore
+
+# CVS
+/CVS/*
+**/CVS/*
+.cvsignore
+*/.cvsignore
+
+# TortoiseGit
+/.tgitconfig
+
+##### IDEs and Editors
+# NPM
+node_modules
+package-lock.json
+tmp/
 
 # Visual Studio Code
 .vscode/*
@@ -26,19 +136,90 @@ yarn-error.log
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.history/*
+*.code-workspace
+.history/
 
-# Miscellaneous
-/.angular/cache
+# JetBrains IDEs
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+out/
+*.iws
+*.iml
+.idea_modules/
+.idea/httpRequests
+
+# vscode
+.vscode/
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~
+local.properties
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
+.cproject
+.target
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+Package Control.cache/
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+.netrwhist
+*~
+tags
+[._]*.un~
+
+# Emacs
+*~
+\#*\#
+/emacs.desktop
+*.elc
+.auto-save-list
+.projectile
+.dir-locals.el
+.network-security.data
+
+##### Build Tools
+# Gradle
+.gradle
+**/build/
+!src/**/build/
+.gradle-tasknamecache
+
+# Composer
+composer.phar
+/vendor/
+composer.lock
+
+# SASS
 .sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
+*.css.map
+*.sass.map
+*.scss.map
 
-# System files
-.DS_Store
-Thumbs.db
-/package-lock.json
-/.vscode/
+
+# PHPStorm
+cache/
+logs/
+
+##### Temporary and Log Files
+dist/
+*.log
+src/environments/environment.ts

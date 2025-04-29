@@ -1,0 +1,25 @@
+<div class="p-6">
+  <h2 class="text-2xl font-bold mb-4">Messdaten</h2>
+  <table class="min-w-full bg-white rounded-xl shadow">
+    <thead>
+    <tr class="bg-gray-100 text-left">
+      <th class="p-3">#</th>
+      <th class="p-3">Farbe</th>
+      <th class="p-3">Temperatur (°C)</th>
+      <th class="p-3">Luftfeuchtigkeit (%)</th>
+      <th class="p-3">Zeitpunkt</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let eintrag of messdaten" class="border-t hover:bg-gray-50">
+      <td class="p-3">{{ eintrag.id }}</td>
+      <td class="p-3">
+        <span class="inline-block w-6 h-6 rounded-full" [style.background]="eintrag.farbe"></span>
+      </td>
+      <td class="p-3">{{ eintrag.temperatur }}</td>
+      <td class="p-3">{{ eintrag.luftfeuchtigkeit }}</td>
+      <td class="p-3">{{ eintrag.zeitpunkt | date:'short' }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
