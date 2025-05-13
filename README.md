@@ -25,7 +25,7 @@ Implementation of a sensor monitoring system on a Raspberry Pi for:
 sudo apt-get update 
 sudo apt-get install -y python3-pip python3-picamera2 python3-rpi.gpio 
 sudo apt-get install -y libgpiod2 
-sudo pip3 install adafruit-circuitpython-dht
+sudo apt-get install -y libpcap-dev
 ```
 
 2. Python environment and requirements:
