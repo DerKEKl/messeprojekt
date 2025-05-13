@@ -44,7 +44,7 @@ pip install -r requirements.txt
 
 ## Usage
 ```bash 
-python SensorDataIntegrationApp.py
+python server.py
 ```
 
 ## Features
