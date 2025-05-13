@@ -1,0 +1,7 @@
+numpy
+opencv-python-headless
+opcua
+adafruit-blinka
+adafruit-circuitpython-dht
+picamera2
+RPi.GPIO
