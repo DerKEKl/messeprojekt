@@ -19,12 +19,17 @@ Implementierung eines Sensor-Monitoring-Systems für den Raspberry Pi zur Erfass
 1. System-Pakete installieren:
 
 ```bash
-sudo apt-get update sudo apt-get install -y python3-pip python3-picamera2 libglib2.0-0
+sudo apt-get update
+sudo apt-get install -y python3-pip python3-picamera2 python3-rpi.gpio
+sudo apt-get install -y libgpiod2
+sudo pip3 install adafruit-circuitpython-dht
 ```
 
 2. Python-Pakete installieren:
 
 ```bash
+python -m venv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 

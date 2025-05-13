@@ -1,7 +1,7 @@
-numpy
-opencv-python-headless
-opcua
-adafruit-blinka
-adafruit-circuitpython-dht
-picamera2
-RPi.GPIO
+numpy>=1.26.1
+opencv-python-headless>=4.8.0
+python-opcua>=0.98.13
+adafruit-blinka>=8.32.0
+adafruit-circuitpython-dht>=4.0.0
+picamera2>=0.3.16
+RPi.GPIO>=0.7.1
