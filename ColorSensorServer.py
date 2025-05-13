@@ -18,45 +18,38 @@ class ColorSensorServer:
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen(5)
         self.running = True
-        threading.Thread(target=self._accept_connections, daemon=True).start()
+        threading.Thread(target=self.accept_connections, daemon=True).start()
 
-    def _accept_connections(self):
+    def accept_connections(self):
         while self.running:
             try:
-                client, _ = self.server_socket.accept()
+                client, addr = self.server_socket.accept()
                 with self.lock:
                     self.clients.append(client)
-                threading.Thread(target=self._handle_client, args=(client,), daemon=True).start()
+                threading.Thread(target=self.handle_client, args=(client,), daemon=True).start()
             except:
-                if self.running:
-                    continue
+                pass
 
-    def _handle_client(self, client):
+    def handle_client(self, client):
         while self.running:
             try:
                 data = client.recv(1024)
                 if not data:
                     break
-                color_data = json.loads(data.decode())
-                if 'rgb' in color_data:
-                    self.current_color = tuple(color_data['rgb'])
+                payload = json.loads(data.decode())
+                if "rgb" in payload:
+                    self.current_color = tuple(payload["rgb"])
             except:
                 break
-        
         with self.lock:
             if client in self.clients:
                 self.clients.remove(client)
         client.close()
 
-    def get_current_color(self):
-        return self.current_color
-
     def stop(self):
         self.running = False
-        for client in self.clients:
-            try:
+        with self.lock:
+            for client in self.clients:
                 client.close()
-            except:
-                pass
         if self.server_socket:
             self.server_socket.close()
