@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MessdatenService} from '../../services/messdaten/messdaten.service';
+import {MessdatenService} from '../../services/messdaten.service';
 
 @Component({
   selector: 'app-messdaten-liste',
