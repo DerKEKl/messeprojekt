@@ -1,64 +1,100 @@
 # Project "Messestand"
 11B391 LF7+8
 
-# Raspberry Pi Sensor-Monitoring-System
+## Raspberry Pi Sensor-Monitoring-System
 
-## Description
-Implementation of a sensor monitoring system on a Raspberry Pi for:
-- Temperature and humidity (DHT22)
-- RGB color values (camera)
-- Secure data transfer via OPC UA and TCP/IP
+### Beschreibung
 
-## Hardware
-- Raspberry Pi (3B+ or newer)
-- DHT22 sensor
-- Raspberry Pi camera or USB webcam
+Ein Sensorüberwachungssystem auf dem Raspberry Pi zur Erfassung und Bereitstellung folgender Daten:
 
-## Prerequisites
-- Python 3.11.7 recommended
+* Temperatur und Luftfeuchtigkeit (DHT22)
+* RGB-Farbwerte per Kamera
+* Lüftersteuerung (automatisch und manuell)
+* Sichere Datenübertragung via OPC UA und TCP/IP
 
-## Installation
+### Hardware
 
-1. System packages:
+* Raspberry Pi (3B+ oder neuer empfohlen)
+* DHT22-Temperatur- und Feuchtigkeitssensor
+* Raspberry Pi Kamera oder USB-Webcam
+* Optional: Lüfter (z. B. 5V PWM) am GPIO
 
-```bash 
-sudo apt-get update 
-sudo apt-get install -y python3-pip python3-picamera2 python3-rpi.gpio 
-sudo apt-get install -y libgpiod2 
-sudo apt-get install -y libpcap-dev
+### Voraussetzungen
+
+* Raspberry Pi OS mit Python 3.11.7 empfohlen
+* Abhängigkeiten (z. B. `picamera2`, `adafruit_dht`, `RPi.GPIO`, `opcua`, `numpy`, `Pillow`)
+
+### Installation
+
+1. Systempakete installieren:
+
+```bash
+chmod a+x systempackets-install.sh
+sudo sh systempackets-install.sh
 ```
 
-2. Python environment and requirements:
+2. Python-Umgebung und Abhängigkeiten:
 
-```bash 
-python -m venv venv 
-source venv/bin/activate 
-pip install --upgrade pip 
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-3. Wiring for DHT22:
-- VCC → 3.3V (Pin 1)
-- DATA → GPIO4 (Pin 7)
-- GND → Ground (Pin 6)
+2.1 Zertifikate erzeugen (optional, wenn nicht automatisch erzeugt):
 
-## Usage
-```bash 
+```bash
+mkdir certificates
+openssl req -x509 -newkey rsa:4096 -nodes \
+  -keyout certificates/server_key.pem \
+  -out certificates/server_cert.pem \
+  -days 1000
+```
+
+3. Verkabelung des DHT22:
+
+* VCC → 3.3V (Pin 1)
+* DATA → GPIO4 (Pin 7)
+* GND → GND (Pin 6)
+
+4. Optional: Lüfter an GPIO18 anschließen:
+
+* * (VCC) → extern oder 5V
+* Steuerleitung → GPIO18 (Pin 12)
+* GND → Masse
+
+## Nutzung
+
+Starten des Servers:
+
+```bash
 python server.py
 ```
 
-## Features
-- Continuous measurement of temperature and humidity
-- RGB color detection via camera
-- OPC UA server with certificates
-- TCP/IP interface for color data
+### Features
 
-## Security
-- Encrypted OPC UA communication
-- Certificate-based authentication
-- Secure TCP/IP connection
+* **Sensorik**
 
-## Notes
-- The code is split into separate classes for temperature/humidity sensing, image processing, TCP color server, and OPC UA server.
-- Certificates for OPC UA can be generated with OpenSSL or created automatically when missing.
-- Ensure correct permissions and camera settings on the Raspberry Pi for the camera module or USB webcam.
+  * Kontinuierliche Erfassung von Temperatur und Luftfeuchtigkeit
+  * Farbwerterkennung (RGB + dominante Farbe) per Kamera oder simuliert
+* **Lüftersteuerung**
+
+  * Automatische Temperaturregelung (ab 27 °C)
+  * Manueller Modus über OPC UA steuerbar
+* **Kommunikation**
+
+  * OPC UA Server mit sicherer Zertifikatsauthentifizierung
+  * TCP/IP-Farbserver für externe Farbdatenabfragen (siehe Quellcode)
+* **Sicherheit**
+
+  * Verschlüsselte OPC UA-Verbindung (Basic256Sha256\_SignAndEncrypt)
+  * Zertifikat- und schlüsselbasierte Authentifizierung
+
+### Hinweise
+
+* Kamera: `picamera2` wird bevorzugt genutzt, `Pillow` als Fallback.
+* Die Farberkennung basiert auf HSV-Werten und erkennt: **Rot**, **Grün**, **Blau**, **Gelb**.
+* Der Code ist modular aufgebaut (Sensor, Kamera, Lüfter, OPC UA, TCP).
+* Zertifikate werden bei Bedarf automatisch erzeugt, wenn sie fehlen.
+* Sicherstellen, dass Kamera- und GPIO-Zugriff im OS aktiviert sind (`raspi-config`).

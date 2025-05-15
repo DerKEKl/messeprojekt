@@ -1,5 +1,9 @@
-opencv-python-headless
-picamera2
 adafruit-blinka
 adafruit-circuitpython-dht
-opcua~=0.98.13
+numpy
+opcua
+board
+RPi.GPIO
+picamera2
+python-opcua-crypto
+Pillow
