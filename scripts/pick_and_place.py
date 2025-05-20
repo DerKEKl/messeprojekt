@@ -11,10 +11,9 @@ time.sleep(1)
 print("[INFO] Verbindung erfolgreich hergestellt!")
 bot.suck(False)
 
-
 def pick():
     print("[AKTION] Greife nach Bauteil...")
-    bot.move_to(10, -241, -41, -87)
+    bot.move_to(10, -241, -41, 0, wait=True)
     bot.suck(True)
     bot.move_to(250, 0, 50, 0)
     print("[AKTION] Bauteil erfasst.")
@@ -68,12 +67,12 @@ def programm():
     pick()
     color = getColor()
     place(color)
+    print(f"RESULT:{color}")
 
 def main():
     programm()
     programm()
     programm()
-
 
 if __name__ == "__main__":
     main()
