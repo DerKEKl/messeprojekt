@@ -7,6 +7,7 @@ const costsRoutes = require('./routes/costsRoutes');
 const statisticsRoutes = require('./routes/statisticsRoutes');
 const partsRoutes = require('./routes/partsRoutes');
 const robotRoutes = require('./routes/robotRoutes')
+const authRoutes = require('./routes/authRoutes')
 
 mongoose.connect(process.env.MONGO_DB_URL, {
 }).then(response => {
@@ -22,6 +23,7 @@ app.use('/api/costs', costsRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/parts', partsRoutes);
 app.use('/api/robot', robotRoutes)
+app.use('/api/auth', authRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
