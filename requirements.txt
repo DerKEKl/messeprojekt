@@ -5,5 +5,5 @@ opcua
 board
 RPi.GPIO
 picamera2
-python-opcua-crypto
 Pillow
+cryptography

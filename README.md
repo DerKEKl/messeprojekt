@@ -17,12 +17,11 @@ Ein Sensorüberwachungssystem auf dem Raspberry Pi zur Erfassung und Bereitstell
 * Raspberry Pi (3B+ oder neuer empfohlen)
 * DHT22-Temperatur- und Feuchtigkeitssensor
 * Raspberry Pi Kamera oder USB-Webcam
-* Optional: Lüfter (z. B. 5V PWM) am GPIO
 
 ### Voraussetzungen
 
 * Raspberry Pi OS mit Python 3.11.7 empfohlen
-* Abhängigkeiten (z. B. `picamera2`, `adafruit_dht`, `RPi.GPIO`, `opcua`, `numpy`, `Pillow`)
+* Abhängigkeiten (z. B. `picamera2`, `adafruit_dht`, `RPi.GPIO`, `opcua`, `numpy`, `Pillow`)
 
 ### Installation
 

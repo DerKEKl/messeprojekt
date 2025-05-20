@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 import time
 import socket
 import logging
@@ -40,7 +41,7 @@ except ImportError:
     logger.warning("PIL (Pillow) nicht verfügbar")
 
 OPCUA_ENDPOINT = "opc.tcp://0.0.0.0:4840"
-OPCUA_SERVER_NAME = "RaspberryPiServer"
+OPCUA_SERVER_NAME = "RaspberryPi :: Server"
 CERTIFICATE_PATH = "certificates/server_cert.pem"
 PRIVATE_KEY_PATH = "certificates/server_key.pem"
 
@@ -50,15 +51,7 @@ TCP_PORT = 5000
 DHT_PIN = 4
 FAN_PIN = 18
 
-COLOR_THRESHOLDS = {
-    "red1": {"lower": np.array([0, 120, 70]), "upper": np.array([10, 255, 255])},
-    "red2": {"lower": np.array([170, 120, 70]), "upper": np.array([180, 255, 255])},
-    "yellow": {"lower": np.array([20, 100, 100]), "upper": np.array([30, 255, 255])},
-    "green": {"lower": np.array([40, 70, 70]), "upper": np.array([80, 255, 255])},
-    "blue": {"lower": np.array([100, 150, 20]), "upper": np.array([140, 255, 255])}
-}
-
-FAN_TEMPERATURE_THRESHOLD = 27.0  # in °C
+FAN_TEMPERATURE_THRESHOLD = 30.0  # in °C
 
 
 class OPCUAServer:
@@ -101,14 +94,13 @@ class OPCUAServer:
 
         self.server.set_security_policy([ua.SecurityPolicyType.Basic256Sha256_SignAndEncrypt])
 
-        idx = self.server.register_namespace("http://example.org/sensors")
+        idx = self.server.register_namespace("http://raspberry-mrt.local/sensors")
         objects = self.server.get_objects_node()
         self.sensors = objects.add_object(idx, "Sensors")
 
         self.temp_var = self.sensors.add_variable(idx, "Temperature", 0.0)
         self.humidity_var = self.sensors.add_variable(idx, "Humidity", 0.0)
         self.color_var = self.sensors.add_variable(idx, "Color", [0, 0, 0])
-        self.color_name_var = self.sensors.add_variable(idx, "ColorName", "none")
         self.fan_status_var = self.sensors.add_variable(idx, "FanStatus", False)
 
         self.fan_control_var = self.sensors.add_variable(idx, "FanControl", False)
@@ -121,7 +113,7 @@ class OPCUAServer:
         self.server.start()
         logger.info(f"OPC UA Server gestartet auf {self.endpoint}")
 
-    def update_values(self, temperature, humidity, color, color_name, fan_status):
+    def update_values(self, temperature, humidity, color, fan_status):
         """
         Aktualisiert die Variablen des OPC UA Servers
         mit neuen Werten für Temperatur, Feuchtigkeit, Farbe und Lüfterstatus.
@@ -132,8 +124,6 @@ class OPCUAServer:
             self.humidity_var.set_value(humidity)
         if color is not None:
             self.color_var.set_value(color)
-        if color_name is not None:
-            self.color_name_var.set_value(color_name)
         if fan_status is not None:
             self.fan_status_var.set_value(fan_status)
 
@@ -247,6 +237,10 @@ class ImageProcessor:
     """
 
     def __init__(self):
+        if not os.path.exists("/dev/video0"):
+            logger.error("Keine Kamera unter /dev/video0 gefunden – Programm wird abgebrochen.")
+            sys.exit(1)
+
         self.camera = None
         self.using_picamera2 = False
 
@@ -264,7 +258,7 @@ class ImageProcessor:
                 self.camera = None
 
         if not self.camera and PIL_AVAILABLE:
-            logger.warning("Kein Kamerazugriff verfügbar, RGB-Werte werden simuliert")
+            logger.warning("Kein Kamerazugriff verfügbar")
         elif not PIL_AVAILABLE and not self.camera:
             logger.warning("Warnung: Weder picamera2 noch PIL sind verfügbar")
 
@@ -279,93 +273,12 @@ class ImageProcessor:
                 r = int(np.mean(frame[:, :, 0]))
                 g = int(np.mean(frame[:, :, 1]))
                 b = int(np.mean(frame[:, :, 2]))
+
                 return r, g, b
-            else:
-                r = int(127 + 50 * np.sin(time.time() * 0.1))
-                g = int(127 + 50 * np.sin(time.time() * 0.2))
-                b = int(127 + 50 * np.sin(time.time() * 0.3))
-                return r, g, b
+            return 0, 0, 0
         except Exception as e:
             logger.error(f"Fehler beim Bestimmen der RGB-Farbwerte: {e}")
             return 0, 0, 0
-
-    def identify_color(self):
-        """
-        Identifiziert die dominante Farbe im Kamerabild.
-        Verwendet die HSV-Farbdarstellung für robustere Farberkennung.
-        """
-        try:
-            if self.using_picamera2 and self.camera:
-                frame = self.camera.capture_array()
-
-                r, g, b = frame[:, :, 0] / 255.0, frame[:, :, 1] / 255.0, frame[:, :, 2] / 255.0
-
-                max_val = np.maximum(np.maximum(r, g), b)
-                min_val = np.minimum(np.minimum(r, g), b)
-                diff = max_val - min_val
-
-                h = np.zeros_like(r)
-                h[max_val == r] = (60 * ((g - b) / (diff + 1e-10)))[max_val == r] % 360
-                h[max_val == g] = (60 * ((b - r) / (diff + 1e-10)) + 120)[max_val == g]
-                h[max_val == b] = (60 * ((r - g) / (diff + 1e-10)) + 240)[max_val == b]
-                h[diff == 0] = 0
-
-                s = np.zeros_like(r)
-                s[max_val != 0] = (diff / (max_val + 1e-10))[max_val != 0]
-
-                v = max_val
-
-                hsv_h = (h / 2).astype(np.uint8)  # Umwandlung von [0, 360] zu [0, 180]
-                hsv_s = (s * 255).astype(np.uint8)
-                hsv_v = (v * 255).astype(np.uint8)
-
-                hsv = np.stack([hsv_h, hsv_s, hsv_v], axis=-1)
-
-                color_counts = {
-                    "red": 0,
-                    "yellow": 0,
-                    "green": 0,
-                    "blue": 0
-                }
-
-                mask_red1 = np.all((hsv >= COLOR_THRESHOLDS["red1"]["lower"]) &
-                                   (hsv <= COLOR_THRESHOLDS["red1"]["upper"]), axis=2)
-                mask_red2 = np.all((hsv >= COLOR_THRESHOLDS["red2"]["lower"]) &
-                                   (hsv <= COLOR_THRESHOLDS["red2"]["upper"]), axis=2)
-                mask_red = mask_red1 | mask_red2
-                color_counts["red"] = np.count_nonzero(mask_red)
-
-                mask_yellow = np.all((hsv >= COLOR_THRESHOLDS["yellow"]["lower"]) &
-                                     (hsv <= COLOR_THRESHOLDS["yellow"]["upper"]), axis=2)
-                color_counts["yellow"] = np.count_nonzero(mask_yellow)
-
-                mask_green = np.all((hsv >= COLOR_THRESHOLDS["green"]["lower"]) &
-                                    (hsv <= COLOR_THRESHOLDS["green"]["upper"]), axis=2)
-                color_counts["green"] = np.count_nonzero(mask_green)
-
-                mask_blue = np.all((hsv >= COLOR_THRESHOLDS["blue"]["lower"]) &
-                                   (hsv <= COLOR_THRESHOLDS["blue"]["upper"]), axis=2)
-                color_counts["blue"] = np.count_nonzero(mask_blue)
-
-                threshold = 200
-                max_color = max(color_counts, key=color_counts.get)
-
-                if color_counts[max_color] > threshold:
-                    logger.info(f"Farbe erkannt: {max_color} (Pixelanzahl: {color_counts[max_color]})")
-                    return max_color
-                else:
-                    logger.info("Keine dominante Farbe erkannt")
-                    return "none"
-            else:
-                current_time = time.time()
-                colors = ["red", "yellow", "green", "blue", "none"]
-                color_idx = int((current_time / 10) % len(colors))
-                logger.info(f"Simulierte Farberkennung: {colors[color_idx]}")
-                return colors[color_idx]
-
-        except Exception as e:
-            logger.error(f"Fehler bei der Farberkennung: {e}")
-            return "none"
 
     def close(self):
         """Schließt die Kamera oder gibt sie frei."""
@@ -385,9 +298,9 @@ class ColorSensorServer:
         self.server_socket = None
         self.running = False
         self.current_color = (0, 0, 0)
-        self.current_color_name = "none"
         self.clients = []
         self.lock = threading.Lock()
+
 
     def start(self):
         """Startet den TCP-Server."""
@@ -402,8 +315,9 @@ class ColorSensorServer:
         except Exception as e:
             logger.error(f"Fehler beim Starten des TCP-Servers: {e}")
 
+
     def accept_connections(self):
-        """Akzeptiert eingehende Verbindungen und startet pro Client einen Thread."""
+        """Akzeptiert eingehende Verbindungen und startet für jeden Client einen Thread."""
         while self.running:
             try:
                 client, addr = self.server_socket.accept()
@@ -419,9 +333,11 @@ class ColorSensorServer:
                 if self.running:
                     logger.error(f"Fehler beim Akzeptieren einer Verbindung: {e}")
 
+
     def handle_client(self, client):
         """
-        Empfängt Daten eines Clients und aktualisiert self.current_color.
+        Empfängt die Farbdaten (RGB) des Clients im JSON-Format,
+        z.B. {"rgb": [R, G, B]}.
         """
         client_address = client.getpeername()
         logger.info(f"Client-Handler gestartet für {client_address}")
@@ -438,9 +354,6 @@ class ColorSensorServer:
                     self.current_color = tuple(payload["rgb"])
                     logger.info(f"Neue Farbwerte von {client_address} empfangen: {self.current_color}")
 
-                if "color_name" in payload:
-                    self.current_color_name = payload["color_name"]
-                    logger.info(f"Neuer Farbname von {client_address} empfangen: {self.current_color_name}")
             except json.JSONDecodeError:
                 logger.warning(f"Ungültiges JSON-Format von {client_address} empfangen")
             except ConnectionResetError:
@@ -456,11 +369,11 @@ class ColorSensorServer:
         client.close()
         logger.info(f"Client-Verbindung zu {client_address} geschlossen")
 
+
     def stop(self):
-        """Beendet den TCP-Server."""
+        """Beendet den TCP-Server und trennt alle aktiven Verbindungen."""
         self.running = False
 
-        # Clients schließen
         with self.lock:
             for client in self.clients:
                 try:
@@ -469,7 +382,6 @@ class ColorSensorServer:
                     logger.warning(f"Fehler beim Schließen eines Clients: {e}")
             self.clients.clear()
 
-        # Server-Socket schließen
         if self.server_socket:
             try:
                 self.server_socket.close()
@@ -510,7 +422,6 @@ def main():
         while True:
             temperature, humidity = temp_sensor.read_sensor()
             rgb = image_proc.get_rgb_values()
-            color_name = image_proc.identify_color()
 
             manual_control = opcua_server.get_fan_control()
             if manual_control:
@@ -522,8 +433,8 @@ def main():
 
             fan_status = fan_controller.status
             logger.info(
-                f"Temperatur: {temperature}°C, Luftfeuchtigkeit: {humidity}%, RGB: {rgb}, Farbe: {color_name}, Lüfter: {'AN' if fan_status else 'AUS'}")
-            opcua_server.update_values(temperature, humidity, rgb, color_name, fan_status)
+                f"Temperatur: {temperature}°C, Luftfeuchtigkeit: {humidity}%, RGB: {rgb}, Lüfter: {'AN' if fan_status else 'AUS'}")
+            opcua_server.update_values(temperature, humidity, rgb, fan_status)
 
             time.sleep(1)
     except KeyboardInterrupt:

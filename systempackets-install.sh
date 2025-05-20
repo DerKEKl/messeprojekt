@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Bitte als root oder mit sudo ausführen."
+    exit 1
+fi
+
 echo "=== Systemupdate und benötigte Pakete installieren ==="
 apt-get update
 apt-get install -y \
@@ -21,7 +26,7 @@ apt-get install -y \
   libfreetype6-dev \
   liblcms2-dev \
   libopenjp2-7 \
-  libtiff5 \
+  libtiff6 \
   libffi-dev \
   libssl-dev \
   i2c-tools \
