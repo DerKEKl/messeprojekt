@@ -1,38 +1,45 @@
-// datei: color-client.js
-
 const net = require('net');
 
-// Host und Port anpassen
-const HOST = '10.62.0.54'; // oder 'localhost' / IP vom Raspberry Pi
+const HOST = '10.62.4.204'; // Raspberry Pi IP oder localhost
 const PORT = 5000;
 
-const rgb = [255, 0, 0];
+let rgb = [255, 0, 0];
 
-// Einfacher Socket-Client
 const client = new net.Socket();
 
-// Verbindung herstellen
 client.connect(PORT, HOST, () => {
-  console.log(`Verbunden mit TCP-Server (${HOST}:${PORT})`);
+    console.log(`Verbunden mit TCP-Server (${HOST}:${PORT})`);
 });
 
-// Server-Antworten verarbeiten
+
 client.on('data', (data) => {
-  console.log('Server:', data.toString());
+    const msg = data.toString().trim();
+    console.log('Server:', msg);
 
-  rgb[0] = data.toString() === 'red' ? 255 : rgb[0] - 1;
-  rgb[1] = data.toString() === 'green' ? 255 : rgb[1] - 1;
-  rgb[2] = data.toString() === 'blue' ? 255 : rgb[2] - 1;
+    if (msg === 'red') {
+        rgb = [255, 0, 0];
+    } else if (msg === 'green') {
+        rgb = [0, 255, 0];
+    } else if (msg === 'blue') {
+        rgb = [0, 0, 255];
+    } else {
+        try {
+            const obj = JSON.parse(msg);
+            if (typeof obj.r === 'number' && typeof obj.g === 'number' && typeof obj.b === 'number') {
+                rgb = [obj.r, obj.g, obj.b];
+            }
+        } catch {
+            console.log('Unbekanntes Serverformat:', msg);
+        }
+    }
 
-  console.log(rgb);
+    console.log('Aktuelle Farbe:', rgb);
 });
 
-// Bei Verbindungsende
 client.on('close', () => {
-  console.log('Verbindung geschlossen.');
+    console.log('Verbindung geschlossen.');
 });
 
-// Bei Fehler
 client.on('error', (err) => {
-  console.error('Fehler:', err.message);
+    console.error('Fehler:', err.message);
 });
