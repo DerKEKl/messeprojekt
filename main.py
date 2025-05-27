@@ -1,7 +1,7 @@
 """
 Hauptprogramm für den Raspberry Pi Sensor Server
 """
-
+import asyncio
 import sys
 import time
 import signal
@@ -9,6 +9,7 @@ import RPi.GPIO as GPIO
 
 # Lokale Imports
 from config import *
+from controllers.led_controller import LEDController
 from utils.logger import setup_logging
 from sensors.temperature_sensor import TemperatureHumiditySensor
 from sensors.image_processor import ImageProcessor, DummyImageProcessor
@@ -23,10 +24,12 @@ class SensorServer:
     """
 
     def __init__(self):
+
         self.logger = setup_logging()
         self.running = False
 
         # Komponenten
+        self.led_controller = None
         self.temp_sensor = None
         self.image_processor = None
         self.fan_controller = None
@@ -51,6 +54,13 @@ class SensorServer:
             TemperatureHumiditySensor,
             "Temperatursensor",
             logger=self.logger
+        )
+
+        # Ledsteuerung
+        self.led_controller = self._safe_init(
+            lambda: LEDController(LED_PIN, logger=self.logger),
+            "LED Controller",
+            fallback_func=None
         )
 
         # Bildverarbeitung
@@ -124,13 +134,29 @@ class SensorServer:
 
         return tcp_started or opcua_started  # Mindestens ein Server sollte laufen
 
+    async def led_blink_task(self):
+        """Async LED Blink-Task, der periodisch blinkt."""
+        if not self.led_controller:
+            self.logger.warning("LED Controller nicht initialisiert - Blink-Task wird nicht gestartet")
+            return
+
+        while self.running:
+            try:
+                await self.led_controller.blink_led(times=2, duration=0.3)
+                await asyncio.sleep(5)
+            except Exception as e:
+                self.logger.error(f"Fehler in LED Blink Task: {e}")
+                await asyncio.sleep(1)
+
     def run_main_loop(self):
         """Hauptschleife für Sensordatenerfassung und -verarbeitung"""
         self.logger.info("Starte Hauptschleife...")
         self.logger.info("Drücken Sie STRG+C zum Beenden.")
 
         self.running = True
-        counter = 0
+
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.led_blink_task())
 
         while self.running:
             try:
@@ -139,18 +165,15 @@ class SensorServer:
                 rgb = self._get_rgb_values()
                 fan_status = self._control_fan(temperature)
 
-                # Log-Ausgabe
-                if counter % 10 == 0:  # Alle 10 Sekunden ausführlich loggen
-                    self.logger.info(
-                        f"Werte - Temp: {temperature}°C, Humidity: {humidity}%, "
-                        f"RGB: {rgb}, Lüfter: {'AN' if fan_status else 'AUS'}"
-                    )
+                self.logger.info(
+                    f"Werte - Temp: {temperature}°C, Humidity: {humidity}%, "
+                    f"RGB: {rgb}, Lüfter: {'AN' if fan_status else 'AUS'}"
+                )
 
                 # OPC UA Server aktualisieren
                 if self.opcua_server:
                     self.opcua_server.update_values(temperature, humidity, rgb, fan_status)
 
-                counter = (counter + 1) % 100
                 time.sleep(SENSOR_READ_INTERVAL)
 
             except Exception as e:
@@ -230,6 +253,13 @@ class SensorServer:
                 self.image_processor.close()
         except Exception as e:
             self.logger.error(f"Fehler beim Schließen der Bildverarbeitung: {e}")
+
+        try:
+            if self.led_controller:
+                self.led_controller.set_led(False)
+                self.led_controller.cleanup()
+        except Exception as e:
+            self.logger.error(f"Fehler beim Aufräumen der Ledsteuerung: {e}")
 
         try:
             if self.fan_controller:

@@ -14,10 +14,11 @@ TCP_PORT = 5000
 
 # GPIO Pin Konfiguration
 DHT_PIN = 4
-FAN_PIN = 18
+FAN_PIN = 13
+LED_PIN = 23
 
 # Sensor Konfiguration
-FAN_TEMPERATURE_THRESHOLD = 30.0  # in °C
+FAN_TEMPERATURE_THRESHOLD = 12.0  # in °C
 
 # Logging Konfiguration
 LOG_DIR = "logs"
