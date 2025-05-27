@@ -148,7 +148,7 @@ class SensorServer:
                 self.logger.error(f"Fehler in LED Blink Task: {e}")
                 await asyncio.sleep(1)
 
-    def run_main_loop(self):
+    async def run_main_loop(self):
         """Hauptschleife für Sensordatenerfassung und -verarbeitung"""
         self.logger.info("Starte Hauptschleife...")
         self.logger.info("Drücken Sie STRG+C zum Beenden.")
@@ -160,25 +160,26 @@ class SensorServer:
 
         while self.running:
             try:
-                # Sensordaten erfassen
                 temperature, humidity = self._read_temperature_sensor()
                 rgb = self._get_rgb_values()
                 fan_status = self._control_fan(temperature)
+
+                if self.tcp_server:
+                    self.tcp_server.update_color(rgb)
 
                 self.logger.info(
                     f"Werte - Temp: {temperature}°C, Humidity: {humidity}%, "
                     f"RGB: {rgb}, Lüfter: {'AN' if fan_status else 'AUS'}"
                 )
 
-                # OPC UA Server aktualisieren
                 if self.opcua_server:
                     self.opcua_server.update_values(temperature, humidity, rgb, fan_status)
 
-                time.sleep(SENSOR_READ_INTERVAL)
+                await asyncio.sleep(SENSOR_READ_INTERVAL)
 
             except Exception as e:
                 self.logger.error(f"Fehler in der Hauptschleife: {e}", exc_info=True)
-                time.sleep(1)  # Kurz warten bei Fehlern
+                await asyncio.sleep(1)
 
     def _read_temperature_sensor(self):
         """Liest Temperatur- und Feuchtigkeitswerte"""
@@ -190,19 +191,10 @@ class SensorServer:
         return None, None
 
     def _get_rgb_values(self):
-        """Ermittelt RGB-Werte von TCP-Client oder Kamera"""
+        """Ermittelt RGB-Werte direkt von der Kamera (ImageProcessor)"""
         try:
-            # Erst TCP-Server prüfen
-            if self.tcp_server:
-                color_from_tcp, has_new_color = self.tcp_server.get_color()
-                if has_new_color:
-                    self.logger.debug(f"Neue TCP-Farbwerte: {color_from_tcp}")
-                    return color_from_tcp
-
-            # Dann Kamera/Bildverarbeitung
             if self.image_processor:
                 return self.image_processor.get_rgb_values()
-
         except Exception as e:
             self.logger.error(f"Fehler beim Ermitteln der RGB-Werte: {e}")
 
@@ -256,7 +248,6 @@ class SensorServer:
 
         try:
             if self.led_controller:
-                self.led_controller.set_led(False)
                 self.led_controller.cleanup()
         except Exception as e:
             self.logger.error(f"Fehler beim Aufräumen der Ledsteuerung: {e}")
@@ -274,20 +265,23 @@ class SensorServer:
 
         self.logger.info("Alle Ressourcen wurden freigegeben.")
 
+async def async_main():
+    server = SensorServer()
+    server.initialize_components()
+
+    if not server.start_servers():
+        server.logger.error("Kein Server konnte gestartet werden - beende Programm")
+        return 1, server
+
+    await server.run_main_loop()
+    return 0, server
+
 
 def main():
-    """Hauptfunktion"""
     server = None
     try:
-        server = SensorServer()
-        server.initialize_components()
-
-        if not server.start_servers():
-            server.logger.error("Kein Server konnte gestartet werden - beende Programm")
-            return 1
-
-        server.run_main_loop()
-
+        ret, server = asyncio.run(async_main())
+        return ret
     except KeyboardInterrupt:
         if server:
             server.logger.info("Programm durch Benutzer beendet (STRG+C)")
@@ -302,7 +296,6 @@ def main():
             server.cleanup()
 
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())
