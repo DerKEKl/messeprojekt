@@ -68,7 +68,7 @@ openssl req -x509 -newkey rsa:4096 -nodes \
 Starten des Servers:
 
 ```bash
-python server.py
+sudo python main.py
 ```
 
 ### Features

@@ -1,0 +1,29 @@
+"""
+Konfigurationsdatei für den Raspberry Pi Sensor Server
+"""
+
+# OPC UA Server Konfiguration
+OPCUA_ENDPOINT = "opc.tcp://0.0.0.0:4840"
+OPCUA_SERVER_NAME = "RaspberryPi :: Server"
+CERTIFICATE_PATH = "certificates/server_cert.pem"
+PRIVATE_KEY_PATH = "certificates/server_key.pem"
+
+# TCP Server Konfiguration
+TCP_HOST = "0.0.0.0"
+TCP_PORT = 5000
+
+# GPIO Pin Konfiguration
+DHT_PIN = 4
+FAN_PIN = 18
+
+# Sensor Konfiguration
+FAN_TEMPERATURE_THRESHOLD = 30.0  # in °C
+
+# Logging Konfiguration
+LOG_DIR = "logs"
+LOG_FILE = "latest.log"
+LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+LOG_LEVEL = "INFO"
+
+# Hauptschleife Konfiguration
+SENSOR_READ_INTERVAL = 1  # Sekunden
