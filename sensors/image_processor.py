@@ -2,9 +2,10 @@
 Bildverarbeitung und Kamera-Interface
 """
 
+import logging
 import os
 import time
-import logging
+
 import numpy as np
 
 # Optional imports mit Fallback

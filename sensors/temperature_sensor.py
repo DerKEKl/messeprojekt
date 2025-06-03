@@ -2,11 +2,12 @@
 DHT22 Temperatursensor Klasse
 """
 
-import time
 import logging
+import time
+
+import RPi.GPIO as GPIO  # Tippfehler von GIOP korrigiert
 import adafruit_dht
 import board
-import RPi.GPIO as GPIO  # Tippfehler von GIOP korrigiert
 
 
 class TemperatureHumiditySensor:

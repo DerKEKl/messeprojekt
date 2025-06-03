@@ -1,6 +1,8 @@
-import RPi.GPIO as GPIO
 import asyncio
 import logging
+
+import RPi.GPIO as GPIO
+
 
 class LEDController:
     def __init__(self, pin, logger=None):
@@ -16,29 +18,25 @@ class LEDController:
             self.logger.error(f"Fehler bei der Initialisierung der LED: {e}")
             raise
 
-    async def blink_led(self, times=3, duration=1):
+    async def blink_led(self, duration=1):
         """Blinkt die LED `times` mal mit Pause `duration` Sekunden."""
         try:
-            for _ in range(times):
-                GPIO.output(self.led_pin, GPIO.HIGH)
-                await asyncio.sleep(duration)
-                GPIO.output(self.led_pin, GPIO.LOW)
-                await asyncio.sleep(duration)
-            self.logger.info(f"LED {times} mal geblinkt mit Dauer {duration}s")
+            self.on()
+            await asyncio.sleep(duration)
+            self.off()
+            self.logger.info(" ")
         except Exception as e:
             self.logger.error(f"Fehler beim Blinken der LED: {e}")
 
     def on(self):
         try:
             GPIO.output(self.led_pin, GPIO.HIGH)
-            self.logger.info("LED eingeschaltet")
         except Exception as e:
             self.logger.error(f"Fehler beim Einschalten der LED: {e}")
 
     def off(self):
         try:
             GPIO.output(self.led_pin, GPIO.LOW)
-            self.logger.info("LED ausgeschaltet")
         except Exception as e:
             self.logger.error(f"Fehler beim Ausschalten der LED: {e}")
 

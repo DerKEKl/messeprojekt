@@ -1,6 +1,6 @@
 import asyncio
-import logging
 import json
+import logging
 
 
 class ColorSensorServer:
@@ -61,6 +61,13 @@ class ColorSensorServer:
                 self.clients.discard(w)
             await asyncio.sleep(1)
 
+    def stop(self):
+        if self.server:
+            self.server.close()
+            self.logger.info("TCP-Server gestoppt")
+        else:
+            self.logger.warning("Server ist nicht gestartet oder bereits gestoppt.")
+
     async def start_server(self):
         self.server = await asyncio.start_server(self.handle_client, self.host, self.port)
         self.logger.info(f"Server gestartet auf {self.host}:{self.port}")
@@ -74,25 +81,3 @@ class ColorSensorServer:
         loop = asyncio.get_event_loop()
         loop.create_task(self.start_server())
         return True
-
-
-class DummyTCPServer:
-    """
-    Dummy-Implementation für Testzwecke
-    """
-
-    def __init__(self, host, port, logger=None):
-        self.host = host
-        self.port = port
-        self.logger = logger or logging.getLogger(__name__)
-        self.current_color = (0, 0, 0)
-
-    def start(self):
-        self.logger.info(f"Dummy-TCP-Server gestartet für {self.host}:{self.port}")
-        return True
-
-    def get_color(self):
-        return self.current_color, False
-
-    def stop(self):
-        self.logger.info("Dummy-TCP-Server gestoppt")

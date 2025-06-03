@@ -2,20 +2,21 @@
 Hauptprogramm für den Raspberry Pi Sensor Server
 """
 import asyncio
-import sys
-import time
+import os
 import signal
+import sys
+
 import RPi.GPIO as GPIO
 
 # Lokale Imports
 from config import *
+from controllers.fan_controller import FanController
 from controllers.led_controller import LEDController
-from utils.logger import setup_logging
+from sensors.image_processor import ImageProcessor
 from sensors.temperature_sensor import TemperatureHumiditySensor
-from sensors.image_processor import ImageProcessor, DummyImageProcessor
-from controllers.fan_controller import FanController, DummyFanController
-from servers.tcp_server import ColorSensorServer, DummyTCPServer
-from servers.opcua_server import OPCUAServer, DummyOPCUAServer
+from servers.opcua_server import OPCUAServer
+from servers.tcp_server import ColorSensorServer
+from utils.logger import setup_logging
 
 
 class SensorServer:
@@ -49,6 +50,22 @@ class SensorServer:
         """Initialisiert alle Komponenten mit Fehlerbehandlung"""
         self.logger.info("Initialisierung der Komponenten gestartet...")
 
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Construct absolute paths for certificates and PKI structure
+        # These absolute paths will be passed to OPCUAServer
+        absolute_certificate_path = os.path.join(script_dir, CERTIFICATE_PATH)
+        absolute_private_key_path = os.path.join(script_dir, PRIVATE_KEY_PATH)
+        absolute_trusted_certs_dir = os.path.join(script_dir, TRUSTED_CERTS)
+        absolute_rejected_certs_dir = os.path.join(script_dir, REJECTED_CERTS)
+        absolute_issued_certs_dir = os.path.join(script_dir, ISSUED_CERTS)
+
+        # Ensure all necessary directories exist
+        os.makedirs(os.path.dirname(absolute_certificate_path), exist_ok=True)  # For server's own cert/key
+        os.makedirs(absolute_trusted_certs_dir, exist_ok=True)
+        os.makedirs(absolute_rejected_certs_dir, exist_ok=True)
+        os.makedirs(absolute_issued_certs_dir, exist_ok=True)
+
         # Temperatursensor
         self.temp_sensor = self._safe_init(
             TemperatureHumiditySensor,
@@ -60,14 +77,12 @@ class SensorServer:
         self.led_controller = self._safe_init(
             lambda: LEDController(LED_PIN, logger=self.logger),
             "LED Controller",
-            fallback_func=None
         )
 
         # Bildverarbeitung
         self.image_processor = self._safe_init(
             ImageProcessor,
             "Bildverarbeitung",
-            DummyImageProcessor,
             logger=self.logger
         )
 
@@ -75,28 +90,26 @@ class SensorServer:
         self.fan_controller = self._safe_init(
             lambda: FanController(FAN_PIN, logger=self.logger),
             "Lüftersteuerung",
-            lambda: DummyFanController(FAN_PIN, logger=self.logger)
         )
 
         # TCP Server
         self.tcp_server = self._safe_init(
             lambda: ColorSensorServer(TCP_HOST, TCP_PORT, logger=self.logger),
             "TCP-Server",
-            lambda: DummyTCPServer(TCP_HOST, TCP_PORT, logger=self.logger)
         )
 
         # OPC UA Server
         self.opcua_server = self._safe_init(
             lambda: OPCUAServer(OPCUA_ENDPOINT, OPCUA_SERVER_NAME,
-                               CERTIFICATE_PATH, PRIVATE_KEY_PATH, logger=self.logger),
+                                absolute_certificate_path, absolute_private_key_path,
+                                absolute_trusted_certs_dir, absolute_rejected_certs_dir,
+                                absolute_issued_certs_dir, logger=self.logger),
             "OPC UA Server",
-            lambda: DummyOPCUAServer(OPCUA_ENDPOINT, OPCUA_SERVER_NAME,
-                                    CERTIFICATE_PATH, PRIVATE_KEY_PATH, logger=self.logger)
         )
 
         self.logger.info("Komponenteninitialisierung abgeschlossen")
 
-    def _safe_init(self, init_func, component_name, fallback_func=None, **kwargs):
+    def _safe_init(self, init_func, component_name, **kwargs):
         """Sichere Initialisierung mit Fallback"""
         try:
             component = init_func(**kwargs) if kwargs else init_func()
@@ -104,15 +117,6 @@ class SensorServer:
             return component
         except Exception as e:
             self.logger.error(f"Fehler bei der Initialisierung von {component_name}: {e}")
-
-            if fallback_func:
-                try:
-                    fallback = fallback_func(**kwargs) if kwargs else fallback_func()
-                    self.logger.info(f"Fallback für {component_name} aktiviert")
-                    return fallback
-                except Exception as fe:
-                    self.logger.error(f"Auch Fallback für {component_name} fehlgeschlagen: {fe}")
-
             return None
 
     def start_servers(self):
@@ -130,9 +134,9 @@ class SensorServer:
             opcua_started = self.opcua_server.start()
 
         self.logger.info(f"Server-Status - TCP: {'OK' if tcp_started else 'FEHLER'}, "
-                        f"OPC UA: {'OK' if opcua_started else 'FEHLER'}")
+                         f"OPC UA: {'OK' if opcua_started else 'FEHLER'}")
 
-        return tcp_started or opcua_started  # Mindestens ein Server sollte laufen
+        return tcp_started or opcua_started
 
     async def led_blink_task(self):
         """Async LED Blink-Task, der periodisch blinkt."""
@@ -140,13 +144,11 @@ class SensorServer:
             self.logger.warning("LED Controller nicht initialisiert - Blink-Task wird nicht gestartet")
             return
 
-        while self.running:
-            try:
-                await self.led_controller.blink_led(times=2, duration=0.3)
-                await asyncio.sleep(5)
-            except Exception as e:
-                self.logger.error(f"Fehler in LED Blink Task: {e}")
-                await asyncio.sleep(1)
+        try:
+            await self.led_controller.blink_led(duration=0.5)
+        except Exception as e:
+            self.logger.error(f"Fehler in LED Blink Task: {e}")
+            await asyncio.sleep(1)
 
     async def run_main_loop(self):
         """Hauptschleife für Sensordatenerfassung und -verarbeitung"""
@@ -154,9 +156,6 @@ class SensorServer:
         self.logger.info("Drücken Sie STRG+C zum Beenden.")
 
         self.running = True
-
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.led_blink_task())
 
         while self.running:
             try:
@@ -171,6 +170,8 @@ class SensorServer:
                     f"Werte - Temp: {temperature}°C, Humidity: {humidity}%, "
                     f"RGB: {rgb}, Lüfter: {'AN' if fan_status else 'AUS'}"
                 )
+
+                await self.led_blink_task()
 
                 if self.opcua_server:
                     self.opcua_server.update_values(temperature, humidity, rgb, fan_status)
@@ -198,7 +199,7 @@ class SensorServer:
         except Exception as e:
             self.logger.error(f"Fehler beim Ermitteln der RGB-Werte: {e}")
 
-        return (0, 0, 0)
+        return 0, 0, 0
 
     def _control_fan(self, temperature):
         """Steuert den Lüfter basierend auf Temperatur und OPC UA Eingaben"""
@@ -215,7 +216,7 @@ class SensorServer:
                 self.fan_controller.set_mode(False)  # Manueller Modus
                 self.fan_controller.set_fan(manual_control)
             else:
-                self.fan_controller.set_mode(True)   # Automatischer Modus
+                self.fan_controller.set_mode(True)  # Automatischer Modus
                 self.fan_controller.auto_control(temperature)
 
             return self.fan_controller.status
@@ -265,6 +266,7 @@ class SensorServer:
 
         self.logger.info("Alle Ressourcen wurden freigegeben.")
 
+
 async def async_main():
     server = SensorServer()
     server.initialize_components()
@@ -296,6 +298,7 @@ def main():
             server.cleanup()
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

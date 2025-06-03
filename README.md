@@ -1,6 +1,7 @@
 # Raspberry Pi Sensor Server
 
-Ein modularer OPC UA und TCP Server für Raspberry Pi Sensoren mit DHT22 Temperatur-/Feuchtigkeitssensor, Kamera-basierter Farberkennung und automatischer Lüftersteuerung.
+Ein modularer OPC UA und TCP Server für Raspberry Pi Sensoren mit DHT22 Temperatur-/Feuchtigkeitssensor,
+Kamera-basierter Farberkennung und automatischer Lüftersteuerung.
 
 ## Projektstruktur
 
@@ -27,21 +28,25 @@ raspberry-pi-sensor-server/
 ## Features
 
 ### Sensoren
+
 - **DHT22**: Temperatur- und Feuchtigkeitsmessung
 - **Kamera**: RGB-Farbwerte aus Kamerabildern
 - **TCP-Client**: Empfang von Farbwerten über TCP
 
 ### Aktoren
+
 - **Lüftersteuerung**: Automatisch und manuell steuerbar
 - **GPIO-basiert**: Unterstützung für Raspberry Pi GPIO
 
 ### Server
+
 - **OPC UA Server**: Industriestandard für Datenbereitstellung
 - **TCP Server**: Empfang von Farbdaten von externen Clients
 - **Sichere Kommunikation**: Zertifikat-basierte Verschlüsselung
 
 ### Robustheit
-- **Fehlerbehandlung**: Graceful Fallbacks bei Hardware-Problemen  
+
+- **Fehlerbehandlung**: Graceful Fallbacks bei Hardware-Problemen
 - **Dummy-Modi**: Testbetrieb ohne Hardware möglich
 - **Logging**: Umfassendes Logging mit automatischer Log-Rotation
 
@@ -67,6 +72,7 @@ sudo apt install python3-rpi.gpio
 ```
 
 ### Python-Umgebung einrichten
+
 ```bash
 # Repository klonen
 git clone <repository-url>
@@ -100,6 +106,7 @@ FAN_TEMPERATURE_THRESHOLD = 30.0  # °C
 ## Verwendung
 
 ### Server starten
+
 ```bash
 # In der virtuellen Umgebung
 source venv/bin/activate
@@ -107,7 +114,9 @@ python main.py
 ```
 
 ### OPC UA Client-Zugriff
+
 Der Server stellt folgende Variablen bereit:
+
 - `Temperature` (Float): Temperatur in °C
 - `Humidity` (Float): Luftfeuchtigkeit in %
 - `Color` (Array): RGB-Farbwerte [R, G, B]
@@ -115,7 +124,9 @@ Der Server stellt folgende Variablen bereit:
 - `FanControl` (Boolean, schreibbar): Manuelle Lüftersteuerung
 
 ### TCP-Client für Farbdaten
+
 Senden Sie JSON-Daten an Port 5000:
+
 ```json
 {"rgb": [255, 128, 64]}
 ```
@@ -123,15 +134,18 @@ Senden Sie JSON-Daten an Port 5000:
 ## Hardware-Verbindungen
 
 ### DHT22 Temperatursensor
+
 - VCC → 3.3V oder 5V
-- GND → GND  
+- GND → GND
 - DATA → GPIO 4 (konfigurierbar)
 
 ### Lüfter (über Relais/Transistor)
+
 - Steuerungspin → GPIO 18 (konfigurierbar)
 - Lüfter → Externe Stromversorgung
 
 ### Kamera
+
 - Raspberry Pi Camera Module über CSI-Schnittstelle
 - Oder USB-Kamera (wird automatisch erkannt)
 
@@ -144,14 +158,17 @@ Senden Sie JSON-Daten an Port 5000:
 ## Entwicklung
 
 ### Testmodus ohne Hardware
+
 Das System erkennt automatisch fehlende Hardware und aktiviert Dummy-Modi:
+
 - Simulierte Sensorwerte bei fehlendem DHT22
-- Simulierte RGB-Werte bei fehlender Kamera  
+- Simulierte RGB-Werte bei fehlender Kamera
 - Dummy-Lüftersteuerung bei GPIO-Problemen
 
 ### Code-Struktur erweitern
+
 - Neue Sensoren: Klassen in `sensors/` hinzufügen
-- Neue Aktoren: Klassen in `controllers/` hinzufügen  
+- Neue Aktoren: Klassen in `controllers/` hinzufügen
 - Neue Server: Klassen in `servers/` hinzufügen
 - Konfiguration in `config.py` erweitern
 
@@ -160,12 +177,14 @@ Das System erkennt automatisch fehlende Hardware und aktiviert Dummy-Modi:
 ### Häufige Probleme
 
 **GPIO-Zugriff verweigert:**
+
 ```bash
 sudo usermod -a -G gpio $USER
 # Neu anmelden erforderlich
 ```
 
 **Kamera nicht erkannt:**
+
 ```bash
 # Kamera aktivieren
 sudo raspi-config
@@ -173,6 +192,7 @@ sudo raspi-config
 ```
 
 **Paketabhängigkeiten:**
+
 ```bash
 # Einzelne Pakete installieren
 pip install adafruit-circuitpython-dht
@@ -180,4 +200,5 @@ pip install opcua
 ```
 
 ### Debug-Modus
+
 Für detaillierte Logs `LOG_LEVEL = "DEBUG"` in `config.py` setzen.
