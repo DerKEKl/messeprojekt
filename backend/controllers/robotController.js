@@ -3,7 +3,7 @@ const partsController = require('../controllers/partsController');
 const partsModel = require('../models/partsModel');
 
 exports.startRoutine = async (req, res) => {
-    exec('py scripts/pick_and_place.py', async (err, stdout, stderr) => {
+    exec('py backend/scripts/pick_and_place.py', async (err, stdout, stderr) => {
         if (err) {
             console.log(stderr);
             return res.status(500).json({ message: "Steuerung fehlgeschlagen." });
