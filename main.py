@@ -56,15 +56,9 @@ class SensorServer:
         # These absolute paths will be passed to OPCUAServer
         absolute_certificate_path = os.path.join(script_dir, CERTIFICATE_PATH)
         absolute_private_key_path = os.path.join(script_dir, PRIVATE_KEY_PATH)
-        absolute_trusted_certs_dir = os.path.join(script_dir, TRUSTED_CERTS)
-        absolute_rejected_certs_dir = os.path.join(script_dir, REJECTED_CERTS)
-        absolute_issued_certs_dir = os.path.join(script_dir, ISSUED_CERTS)
 
         # Ensure all necessary directories exist
         os.makedirs(os.path.dirname(absolute_certificate_path), exist_ok=True)  # For server's own cert/key
-        os.makedirs(absolute_trusted_certs_dir, exist_ok=True)
-        os.makedirs(absolute_rejected_certs_dir, exist_ok=True)
-        os.makedirs(absolute_issued_certs_dir, exist_ok=True)
 
         # Temperatursensor
         self.temp_sensor = self._safe_init(
@@ -102,8 +96,7 @@ class SensorServer:
         self.opcua_server = self._safe_init(
             lambda: OPCUAServer(OPCUA_ENDPOINT, OPCUA_SERVER_NAME,
                                 absolute_certificate_path, absolute_private_key_path,
-                                absolute_trusted_certs_dir, absolute_rejected_certs_dir,
-                                absolute_issued_certs_dir, logger=self.logger),
+                                logger=self.logger),
             "OPC UA Server",
         )
 

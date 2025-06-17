@@ -7,9 +7,6 @@ OPCUA_ENDPOINT = "opc.tcp://0.0.0.0:4840"
 OPCUA_SERVER_NAME = "RaspberryPi :: Server"
 CERTIFICATE_PATH = "certificates/server_cert.pem"
 PRIVATE_KEY_PATH = "certificates/server_key.pem"
-TRUSTED_CERTS = " servers/pki/trusted/certs"
-REJECTED_CERTS = "servers/pki/rejected/certs"
-ISSUED_CERTS = "servers/pki/issued/certs"
 
 # TCP Server Konfiguration
 TCP_HOST = "0.0.0.0"

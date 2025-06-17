@@ -13,19 +13,12 @@ class OPCUAServer:
     """
 
     def __init__(self, endpoint, name, cert_path, key_path,
-                 trusted_certs_dir=None, rejected_certs_dir=None, issued_certs_dir=None,
                  logger=None):
         self.server = Server()
         self.endpoint = endpoint
         self.name = name
         self.cert_path = cert_path
         self.key_path = key_path
-
-        # We still accept these paths in __init__ for clarity and potential future use
-        # but they will NOT be programmatically used by this version of OPCUAServer.
-        self.trusted_certs_dir = trusted_certs_dir
-        self.rejected_certs_dir = rejected_certs_dir
-        self.issued_certs_dir = issued_certs_dir
 
         self.logger = logger or logging.getLogger(__name__)
 
@@ -72,12 +65,15 @@ class OPCUAServer:
         # Load the server's own certificate and private key directly here
         self.server.load_certificate(self.cert_path)
         self.server.load_private_key(self.key_path)
+        server.load_client_certificate_validation(validate_client_cert)
         self.logger.info("Server-Zertifikat und Schlüssel geladen.")
 
     def _setup_security(self):
         """Konfiguriert nur Sicherheitsrichtlinien. Vertrauensliste wird über Dateisystem erwartet."""
 
-        self.server.set_security_policy([ua.SecurityPolicyType.Basic256Sha256_SignAndEncrypt])
+        server.set_security_policy([
+            ua.SecurityPolicyType.Basic256Sha256_SignAndEncrypt,
+        ])
         self.logger.info("Sicherheitsrichtlinien konfiguriert.")
 
     def _create_variables(self):
@@ -155,3 +151,7 @@ class OPCUAServer:
             self.logger.info("OPC UA Server gestoppt")
         except Exception as e:
             self.logger.error(f"Fehler beim Stoppen des OPC UA Servers: {e}")
+
+    def validate_client_cert(is_valid, certificate):
+        print("Zertifikat des Clients empfangen. Akzeptiere: ", certificate)
+        return True  # Automatisch jedes vorgelegte Zertifikat akzeptieren
