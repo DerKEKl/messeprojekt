@@ -1,0 +1,25 @@
+# Raspberry Pi Sensor Server Dependencies
+
+# Core sensor libraries
+adafruit-circuitpython-dht>=3.7.0
+adafruit-blinka>=8.0.0
+RPi.GPIO>=0.7.1
+cryptography
+
+# Camera support
+picamera2>=0.3.0
+Pillow>=9.0.0
+
+# OPC UA Server
+opcua>=0.98.13
+
+# Data processing
+numpy>=1.21.0
+
+# Optional: For advanced image processing
+# opencv-python>=4.5.0
+
+# Development dependencies (optional)
+# pytest>=7.0.0
+# black>=22.0.0
+# flake8>=4.0.0
