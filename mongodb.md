@@ -44,7 +44,7 @@ MongoDB Konfiguration öffnen:
 sudo nano /etc/mongod.conf
 ```
 
-Change the bindIp under network interfaces: to the desired IP range. `(0.0.0.0)` allows access from any IP:
+Unter network interfaces lässt sich die bindIp einstellen. `(0.0.0.0)` erlaubt zugriff von jeder IP:
 
 ```
 net:
