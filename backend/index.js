@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const mongoose = require('mongoose');
-require('dotenv').config()
+require('dotenv').config({ path: path.join(__dirname, '../.env') })
 const sensorRoutes = require('./routes/sensorRoutes');
 const costsRoutes = require('./routes/costsRoutes');
 const statisticsRoutes = require('./routes/statisticsRoutes');
@@ -24,6 +25,15 @@ app.use('/api/statistics', statisticsRoutes);
 app.use('/api/parts', partsRoutes);
 app.use('/api/robot', robotRoutes)
 app.use('/api/auth', authRoutes)
+
+if (process.env.NODE_ENV === 'production') {
+    console.log('Production mode - serving frontend');
+    app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+    app.get('*"."', (req, res) => {
+        res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+    });
+}
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {

@@ -1,4 +1,5 @@
 const axios = require("axios");
+const https = require("https");
 
 async function calcEnergyCosts(parts, date) {
   const priceByDay = await getEnergyPrice(date);
@@ -16,8 +17,10 @@ async function getEnergyPrice(date) {
     url += `?start=${timestamp}`;
   }
 
+  const agent = new https.Agent({ rejectUnauthorized: false });
+
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(url, { httpsAgent: agent });
     return response.data.data;
   } catch (error) {
     console.error("Fehler beim Abrufen der Strompreise:", error);
