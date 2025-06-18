@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Router, RouterLink, RouterLinkActive, RouterModule} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AuthService} from '../../services/auth.service';
-import {AsyncPipe, CommonModule} from '@angular/common';
-import {FaIconComponent, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {CommonModule} from '@angular/common';
+import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {ThemeToggleComponent} from '../theme-toggle/theme-toggle.component';
+import {faCog, faHome, faInfo, faMoon, faRobot, faSun, faUser} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-navigation',
@@ -18,9 +19,14 @@ export class NavigationComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    library: FaIconLibrary
   ) {
-    this.user$ = this.authService.user$;
+    library
+      .addIcons(faUser, faRobot, faCog, faSun, faMoon, faInfo, faHome);
+
+    this
+      .user$ = this.authService.user$;
   }
 
   ngOnInit() {

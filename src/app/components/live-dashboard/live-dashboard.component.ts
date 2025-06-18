@@ -2,7 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {DatePipe, NgIf} from '@angular/common';
 import {MqttClientService, TemperatureData} from '../../services/mqtt-client.service';
-import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {FaIconComponent, FaIconLibrary} from '@fortawesome/angular-fontawesome';
+import {faBolt, faCog, faDatabase, faStop, faRefresh, faPlay, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-live-dashboard',
@@ -25,7 +26,8 @@ export class LiveDashboardComponent implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private mqttService: MqttClientService) {
+  constructor(private mqttService: MqttClientService, library: FaIconLibrary) {
+    library.addIcons(faCog, faBolt, faDatabase, faRefresh, faStop, faPlay, faInfoCircle);
   }
 
   ngOnInit() {

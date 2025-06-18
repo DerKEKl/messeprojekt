@@ -2,10 +2,11 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {ColorDistribution, DailyReport, StatisticsService} from '../../services/statistics.service';
 import {EnergiekostenService} from '../../services/energiekosten.service';
-import {CommonModule, DatePipe, NgForOf, NgIf} from '@angular/common';
-import {FaIconComponent, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {CommonModule} from '@angular/common';
+import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {FormsModule} from '@angular/forms';
 import {NavigationComponent} from '../navigation/navigation.component';
+import {faBolt, faCalendarAlt, faChartBar, faClock, faDownload, faFilter} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-statistics',
@@ -32,8 +33,10 @@ export class StatisticsComponent implements OnInit, OnDestroy {
 
   constructor(
     private statisticsService: StatisticsService,
-    private energiekostenService: EnergiekostenService
+    private energiekostenService: EnergiekostenService,
+    library: FaIconLibrary,
   ) {
+    library.addIcons(faChartBar, faCalendarAlt, faDownload, faFilter, faClock, faBolt);
     this.selectedDate = new Date().toISOString().split('T')[0];
     this.selectedWeek = this.getWeekStart().toISOString().split('T')[0];
     this.selectedMonth = `${this.selectedYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;

@@ -1,6 +1,6 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {EnergiekostenComponent} from '../energiekosten/energiekosten.component';
 import {ThemeService} from '../../services/theme.service';
 import {RobotService, RobotStatus} from '../../services/robot.service';
@@ -8,6 +8,7 @@ import {MqttClientService, TemperatureData} from '../../services/mqtt-client.ser
 import {interval, Subscription} from 'rxjs';
 import {MessdatenListeComponent} from '../messdaten-liste/messdaten-liste.component';
 import {NavigationComponent} from '../navigation/navigation.component';
+import {faBolt, faDatabase, faPlay, faRefresh, faStop} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,8 +36,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private robotService: RobotService,
-    private mqttService: MqttClientService
+    private mqttService: MqttClientService,
+    library: FaIconLibrary
   ) {
+    library.addIcons(faDatabase, faRefresh, faPlay, faStop, faBolt)
   }
 
   ngOnInit() {

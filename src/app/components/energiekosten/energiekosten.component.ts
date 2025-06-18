@@ -4,7 +4,8 @@ import {interval, Subscription} from 'rxjs';
 import {FormsModule} from '@angular/forms';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {EnergiekostenService} from '../../services/energiekosten.service';
-import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {FaIconComponent, FaIconLibrary} from '@fortawesome/angular-fontawesome';
+import {faBolt, faInfo, faRefresh} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-energiekosten',
@@ -29,7 +30,8 @@ export class EnergiekostenComponent implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private energiekostenService: EnergiekostenService) {
+  constructor(private energiekostenService: EnergiekostenService, library: FaIconLibrary) {
+    library.addIcons(faInfo, faBolt, faRefresh);
   }
 
   ngOnInit() {

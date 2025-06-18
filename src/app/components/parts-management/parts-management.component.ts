@@ -3,9 +3,10 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {Subscription} from 'rxjs';
 import {CreatePartRequest, Part} from '../../models/part';
 import {PartsService} from '../../services/parts.service';
-import {CommonModule, DatePipe, NgForOf, NgIf} from '@angular/common';
-import {FaIconComponent, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {CommonModule} from '@angular/common';
+import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {NavigationComponent} from '../navigation/navigation.component';
+import {faEdit, faPlus, faSave, faSearch, faTimes, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-parts-management',
@@ -29,8 +30,10 @@ export class PartsManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private partsService: PartsService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    library: FaIconLibrary
   ) {
+    library.addIcons(faPlus, faSearch, faEdit, faTrash, faTimes, faSave);
     this.partForm = this.formBuilder.group({
       partNumber: ['', [Validators.required, Validators.pattern(/^[A-Z]-\d{3}$/)]],
       color: ['', Validators.required],

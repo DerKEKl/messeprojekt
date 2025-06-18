@@ -5,7 +5,16 @@ import {Subscription} from 'rxjs';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Part} from '../../models/part';
 import {PartsService} from '../../services/parts.service';
-import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {FaIconComponent, FaIconLibrary} from '@fortawesome/angular-fontawesome';
+import {
+  faBolt,
+  faCalendar,
+  faChartBar,
+  faDatabase, faEye,
+  faFilter,
+  faInfo, faPlus,
+  faRefresh, faSearch, faTimes
+} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-messdaten-liste',
@@ -38,7 +47,8 @@ export class MessdatenListeComponent implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private partsService: PartsService) {
+  constructor(private partsService: PartsService, library: FaIconLibrary) {
+    library.addIcons(faInfo, faBolt, faRefresh, faChartBar, faSearch, faFilter, faCalendar, faDatabase, faEye, faTimes, faPlus);
   }
 
   ngOnInit() {
