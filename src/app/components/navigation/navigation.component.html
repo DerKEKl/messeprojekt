@@ -1,0 +1,69 @@
+<nav class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <!-- Logo und Titel -->
+      <div class="flex items-center space-x-4">
+        <fa-icon icon="robot" class="text-2xl text-blue-600 dark:text-blue-400"></fa-icon>
+        <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+          Messeprojekt Dashboard
+        </h1>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="hidden md:flex items-center space-x-6">
+        <a routerLink="/dashboard"
+           routerLinkActive="text-blue-600 dark:text-blue-400"
+           class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <fa-icon icon="home"></fa-icon>
+          <span>Dashboard</span>
+        </a>
+
+        <a routerLink="/messdaten"
+           routerLinkActive="text-blue-600 dark:text-blue-400"
+           class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <fa-icon icon="chart-bar"></fa-icon>
+          <span>Messdaten</span>
+        </a>
+
+        <a routerLink="/energiekosten"
+           routerLinkActive="text-blue-600 dark:text-blue-400"
+           class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <fa-icon icon="bolt"></fa-icon>
+          <span>Energiekosten</span>
+        </a>
+
+        <a routerLink="/statistics"
+           routerLinkActive="text-blue-600 dark:text-blue-400"
+           class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <fa-icon icon="chart-bar"></fa-icon>
+          <span>Statistiken</span>
+        </a>
+
+        <a routerLink="/parts"
+           routerLinkActive="text-blue-600 dark:text-blue-400"
+           class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <fa-icon icon="database"></fa-icon>
+          <span>Bauteile</span>
+        </a>
+      </div>
+
+      <!-- Theme Toggle und User Menu -->
+      <div class="flex items-center space-x-4">
+        <app-theme-toggle></app-theme-toggle>
+
+        <div class="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300">
+          <fa-icon icon="user"></fa-icon>
+          <span>{{ (user$ | async)?.username || 'Admin' }}</span>
+        </div>
+
+        <button
+          (click)="logout()"
+          class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors">
+          <fa-icon icon="right-from-bracket"></fa-icon>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+

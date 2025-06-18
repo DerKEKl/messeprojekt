@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { EnergiekostenService } from './energiekosten.service';
+import {EnergiekostenService} from './energiekosten.service';
 
 describe('EnergiekostenService', () => {
   let service: EnergiekostenService;

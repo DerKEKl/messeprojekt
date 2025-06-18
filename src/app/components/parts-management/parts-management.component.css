@@ -1,0 +1,12 @@
+/* Zusätzliche Styles falls benötigt */
+.part-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.part-card:hover {
+  transform: translateY(-2px);
+}
+
+.color-indicator {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+}

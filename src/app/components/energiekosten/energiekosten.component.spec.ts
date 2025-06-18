@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { EnergiekostenComponent } from './energiekosten.component';
+import {EnergiekostenComponent} from './energiekosten.component';
 
 describe('EnergiekostenComponent', () => {
   let component: EnergiekostenComponent;
@@ -10,7 +10,7 @@ describe('EnergiekostenComponent', () => {
     await TestBed.configureTestingModule({
       imports: [EnergiekostenComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(EnergiekostenComponent);
     component = fixture.componentInstance;
