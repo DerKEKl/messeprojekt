@@ -1,0 +1,120 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+  <app-navigation></app-navigation>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+      <p class="mt-2 text-gray-600 dark:text-gray-400">
+        Übersicht über Ihre Produktionsdaten und Systemstatus
+      </p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Live Temperatur -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Temperatur</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+              {{ currentTemperature?.value || '--' }}°{{ currentTemperature?.unit || 'C' }}
+            </p>
+          </div>
+          <div class="p-3 bg-red-100 dark:bg-red-900 rounded-full">
+            <fa-icon icon="bolt" class="text-red-600 dark:text-red-400 text-xl"></fa-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teile heute -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Teile heute</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+              {{ robotStatus?.totalPartsToday || 0 }}
+            </p>
+          </div>
+          <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
+            <fa-icon icon="database" class="text-blue-600 dark:text-blue-400 text-xl"></fa-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- Roboter Status -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Roboter</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+              {{ robotStatus?.isActive ? 'Aktiv' : 'Gestoppt' }}
+            </p>
+          </div>
+          <div class="p-3 rounded-full"
+               [class]="robotStatus?.isActive ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'">
+            <fa-icon
+              [icon]="robotStatus?.isActive ? 'play' : 'stop'"
+              [class]="robotStatus?.isActive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"
+              class="text-xl">
+            </fa-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- MQTT Status -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">MQTT</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+              {{ mqttConnected ? 'Verbunden' : 'Getrennt' }}
+            </p>
+          </div>
+          <div class="p-3 rounded-full"
+               [class]="mqttConnected ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'">
+            <fa-icon
+              icon="database"
+              [class]="mqttConnected ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"
+              class="text-xl">
+            </fa-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Control Buttons -->
+    <div class="flex flex-wrap gap-4 mb-8">
+      <button
+        (click)="startRobot()"
+        [disabled]="robotStatus?.isActive || isRobotLoading"
+        class="flex items-center space-x-2 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg disabled:cursor-not-allowed">
+        <fa-icon [icon]="isRobotLoading ? 'refresh' : 'play'" [class.animate-spin]="isRobotLoading"></fa-icon>
+        <span>{{ isRobotLoading ? 'Wird gestartet...' : 'Roboter starten' }}</span>
+      </button>
+
+      <button
+        (click)="stopRobot()"
+        [disabled]="!robotStatus?.isActive || isRobotLoading"
+        class="flex items-center space-x-2 px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg disabled:cursor-not-allowed">
+        <fa-icon [icon]="isRobotLoading ? 'refresh' : 'stop'" [class.animate-spin]="isRobotLoading"></fa-icon>
+        <span>{{ isRobotLoading ? 'Wird gestoppt...' : 'Roboter stoppen' }}</span>
+      </button>
+
+      <button
+        (click)="refreshData()"
+        [disabled]="isDataLoading"
+        class="flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg disabled:cursor-not-allowed">
+        <fa-icon icon="refresh" [class.animate-spin]="isDataLoading"></fa-icon>
+        <span>Daten aktualisieren</span>
+      </button>
+    </div>
+
+    <!-- Components Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <app-messdaten-liste></app-messdaten-liste>
+      <app-energiekosten></app-energiekosten>
+    </div>
+  </main>
+</div>
