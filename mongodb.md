@@ -1,4 +1,4 @@
-# Installing MongoDB on Ubuntu 20.04
+# Installation MongoDB Ubuntu 20.04
 
 Detaillierte Anleitung auf der offiziellen [MongoDB Website](https://www.mongodb.com/docs/manual/administration/install-on-linux/)<br>
 Ubuntu > 24.x benötigt `distutils-extra` Paket
