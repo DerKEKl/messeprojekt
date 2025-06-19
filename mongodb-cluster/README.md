@@ -8,7 +8,7 @@ Das Cluster besteht aus mehreren Komponenten
   <br>
   <br>
   <br>
-![mongodb-cluster](https://github.com/DerKEKl/messeprojekt/blob/3bf634d2ba132c40ab50c67a56795ea6710bc7b4/mongodb-cluster.jpg)
+![mongodb-cluster]([https://github.com/DerKEKl/messeprojekt/blob/3bf634d2ba132c40ab50c67a56795ea6710bc7b4/mongodb-cluster.jpg](https://github.com/DerKEKl/messeprojekt/blob/729f88434cf4653693e2c1901d78b5e5d568ce57/mongodb-cluster.png))
 
 
 ## Voraussetzungen
