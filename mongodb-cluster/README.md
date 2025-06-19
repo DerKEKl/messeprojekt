@@ -97,6 +97,8 @@ Collection sharden
 ```
 sh.shardCollection("daten.parts", { partNumber: "hashed" })
 ```
+Sharded die Collection `parts` in der Datenbank `daten`, anhand des Shard-Key-Feldes `partNumber` und nutzt hier die Funktion `hashed`<br>
+Wir haben uns für die Funktion `hashed` entschieden, weil diese einen Hashwert berechnet und anhand diesem die Daten gleichmäßig auf die beiden Shars aufteilt. So benötigen wir kein Loadbalancing.
 ## Statusabfragen
 Sharding-Status anzeigen
 ```
