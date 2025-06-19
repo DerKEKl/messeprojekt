@@ -6,7 +6,7 @@ from identify_color import identify
 sys.path.insert(0, "src")
 
 print("[INFO] Verbindung zu Dobot wird hergestellt...")
-bot = Dobot("COM6")
+bot = Dobot("COM8")
 time.sleep(1)
 print("[INFO] Verbindung erfolgreich hergestellt!")
 bot.suck(False)
