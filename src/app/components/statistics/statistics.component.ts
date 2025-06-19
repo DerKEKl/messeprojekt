@@ -1,6 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
-import {ColorDistribution, DailyReport, StatisticsService, WeeklySummary, MonthlySummary} from '../../services/statistics.service';
+import {
+  ColorDistribution,
+  DailyReport,
+  MonthlySummary,
+  StatisticsService,
+  WeeklySummary
+} from '../../services/statistics.service';
 import {EnergiekostenService} from '../../services/energiekosten.service';
 import {CommonModule} from '@angular/common';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
@@ -76,7 +82,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         this.isLoading = false;
 
         if (this.dailyError) {
-          this.notificationService.error(``,'Keine Daten für das ausgewählte Datum verfügbar');
+          this.notificationService.error(``, 'Keine Daten für das ausgewählte Datum verfügbar');
         }
       },
       error: (error) => {
@@ -84,7 +90,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         this.dailyError = true;
         this.dailyReport = null;
         this.isLoading = false;
-        this.notificationService.error(``,'Fehler beim Laden des Tagesberichts');
+        this.notificationService.error(``, 'Fehler beim Laden des Tagesberichts');
       }
     });
 
@@ -105,7 +111,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         this.isLoading = false;
 
         if (this.weeklyError) {
-          this.notificationService.error(``,'Keine Daten für die ausgewählte Woche verfügbar');
+          this.notificationService.error(``, 'Keine Daten für die ausgewählte Woche verfügbar');
         }
       },
       error: (error) => {
@@ -113,7 +119,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         this.weeklyError = true;
         this.weeklySummary = null;
         this.isLoading = false;
-        this.notificationService.error(``,'Fehler beim Laden der Wochenübersicht');
+        this.notificationService.error(``, 'Fehler beim Laden der Wochenübersicht');
       }
     });
 
@@ -134,7 +140,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         this.isLoading = false;
 
         if (this.monthlyError) {
-          this.notificationService.error(``,'Keine Daten für den ausgewählten Monat verfügbar');
+          this.notificationService.error(``, 'Keine Daten für den ausgewählten Monat verfügbar');
         }
       },
       error: (error) => {
@@ -142,7 +148,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         this.monthlyError = true;
         this.monthlySummary = null;
         this.isLoading = false;
-        this.notificationService.error(``,'Fehler beim Laden der Monatsübersicht');
+        this.notificationService.error(``, 'Fehler beim Laden der Monatsübersicht');
       }
     });
 
@@ -159,7 +165,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         console.error('Error loading color distribution:', error);
         this.colorError = true;
         this.colorDistribution = [];
-        this.notificationService.error(``,'Fehler beim Laden der Farbverteilung');
+        this.notificationService.error(``, 'Fehler beim Laden der Farbverteilung');
       }
     });
 
@@ -248,7 +254,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
 
     // Erstelle und lade CSV-Datei herunter
     const csvContent = this.convertToCSV(dataToExport);
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);

@@ -19,9 +19,11 @@ import {
   faClock,
   faCog,
   faDatabase,
+  faDownload,
   faEdit,
   faEuroSign,
   faExclamation,
+  faExclamationTriangle,
   faEye,
   faEyeSlash,
   faFilter,
@@ -46,7 +48,7 @@ import {
   faSyncAlt,
   faTimes,
   faTrash,
-  faUser, faExclamationTriangle, faDownload,
+  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import {NotificationComponent} from './components/notification/notification.component';
 import {filter} from 'rxjs';

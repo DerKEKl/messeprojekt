@@ -16,6 +16,7 @@ import {
   faClock,
   faCog,
   faDatabase,
+  faDownload,
   faEdit,
   faEuroSign,
   faExclamation,
@@ -46,7 +47,7 @@ import {
   faSyncAlt,
   faTimes,
   faTrash,
-  faUser, faDownload,
+  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
