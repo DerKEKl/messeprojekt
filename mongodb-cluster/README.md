@@ -2,9 +2,9 @@
 
 ## Cluster Komponenten
 Das Cluster besteht aus mehreren Komponenten
-* Konfigurationsserver
-* Shard-Server
-* Mongo-Router
+* `Konfigurationsserver` speichert die Metadaten für das Cluster und weiß somit wo sich die Daten befinden
+* `Shard-Server` enhält alle Daten die gespeichert wurden
+* `Mongo-Router` ist der Zugangspunk für alle Anfragen an das Cluster
   <br>
   <br>
   <br>
