@@ -30,25 +30,30 @@ async function getProfitTime(partsCount) {
   const partsPerHour = 5;
   const hoursNeeded = Math.ceil(partsCount / partsPerHour);
 
-  let bestStartIndex = 0;
-  let lowestTotalPrice = Infinity;
-
-  for (let i = 0; i <= prices.length - hoursNeeded; i++) {
-    const window = prices.slice(i, i + hoursNeeded);
-    const totalPrice = window.reduce((sum, entry) => sum + entry.marketprice, 0);
-
-    if (totalPrice < lowestTotalPrice) {
-      lowestTotalPrice = totalPrice;
-      bestStartIndex = i;
-    }
+  const availableHours = prices.length;
+  const cycles = Math.ceil(hoursNeeded / availableHours);
+  
+  let extendedPrices = [];
+  for (let cycle = 0; cycle < cycles; cycle++) {
+    extendedPrices = extendedPrices.concat(prices);
   }
 
-  const bestWindow = prices.slice(bestStartIndex, bestStartIndex + hoursNeeded);
+  const actualHoursToUse = Math.min(hoursNeeded, extendedPrices.length);
+  
+  const sortedPrices = [...extendedPrices]
+    .sort((a, b) => a.marketprice - b.marketprice)
+    .slice(0, actualHoursToUse);
+
+  const selectedHours = sortedPrices.sort((a, b) => 
+    new Date(a.start_timestamp).getTime() - new Date(b.start_timestamp).getTime()
+  );
+
+  const totalPrice = selectedHours.reduce((sum, entry) => sum + entry.marketprice, 0);
 
   return {
-    startTimestamp: bestWindow[0].start_timestamp,
-    endTimestamp: bestWindow[bestWindow.length - 1].start_timestamp,
-    totalPrice: lowestTotalPrice,
+    startTimestamp: selectedHours[0].start_timestamp,
+    endTimestamp: selectedHours[selectedHours.length - 1].start_timestamp,
+    totalPrice: totalPrice,
     partsCount: partsCount,
     hoursNeeded: hoursNeeded
   };
