@@ -11,10 +11,10 @@ Das Cluster besteht aus mehreren Komponenten
 1. [Docker](https://docs.docker.com/engine/install/) & [Docker Compose](https://docs.docker.com/compose/install/) müssen installiert sein
 2. Der MongoDB Server muss bereits installiert sein [Anleitung](https://github.com/DerKEKl/messeprojekt/blob/9f876e6d1f50d796155ae4e295d76284436ae293/mongodb-cluster/mongodb.md)
 
-## Repo klonen
+## Repository klonen
 ```
 git clone https://github.com/DerKEKl/messeprojekt/tree/master/mongodb-cluster
-cd /mongodb-cluster
+cd mongodb-cluster
 
 ```
 
@@ -92,6 +92,36 @@ Shards zum Cluster hinzufügen
 mongosh mongodb://localhost:30000
 sh.addShard("shard1_rs/<ip>:20001,<ip>:20002,<ip>:20003")
 sh.addShard("shard2_rs/<ip>:20004,<ip>:20005,<ip>:20006")
+
+
+```
+
+## Sharding einer Collection
+Datenbank erstellen
+```
+
+use daten
+
+
+```
+Collection sharden
+```
+
+sh.shardCollection("daten.parts", { partNumber: "hashed" })
+
+
+```
+## Statusabfragen
+Sharding-Status anzeigen
+```
+
+sh.status()
+
+```
+Datenverteilung anzeigen
+```
+
+db.parts.getShardDistribution()
 
 
 ```
