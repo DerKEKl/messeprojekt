@@ -1,7 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {ThemeService} from '../../services/theme.service';
-import {FaIconComponent, FaIconLibrary} from '@fortawesome/angular-fontawesome';
-import {faMoon, faSun} from '@fortawesome/free-solid-svg-icons';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-theme-toggle',
@@ -14,7 +13,6 @@ import {faMoon, faSun} from '@fortawesome/free-solid-svg-icons';
 export class ThemeToggleComponent {
   themeService = inject(ThemeService);
 
-  constructor(library: FaIconLibrary) {
-    library.addIcons(faMoon, faSun);
+  constructor() {
   }
 }

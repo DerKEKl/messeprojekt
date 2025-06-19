@@ -1,200 +1,216 @@
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-  <!-- Header -->
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-center space-x-3 mb-4">
-      <fa-icon icon="chart-bar" class="text-blue-600 dark:text-blue-400 text-xl"></fa-icon>
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Messdaten</h2>
-      <span
-        class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full text-xs font-medium">
-            {{ filteredData.length }} Einträge
-          </span>
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <app-navigation *ngIf="!isMainPage()"></app-navigation>
+
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <fa-icon icon="chart-bar" class="text-blue-500 mr-3"></fa-icon>
+        Messdaten
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">Übersicht aller aufgezeichneten Messwerte</p>
     </div>
 
     <!-- Filter Section -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Suche -->
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <fa-icon icon="search" class="text-gray-400"></fa-icon>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <fa-icon icon="filter" class="text-green-500 mr-2"></fa-icon>
+        Filter
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <!-- Suche -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <fa-icon icon="search" class="text-gray-400"></fa-icon>
+          </div>
+          <input
+            [formControl]="searchControl"
+            type="text"
+            placeholder="Bauteilnummer oder Farbe..."
+            class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                   focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                   placeholder-gray-400 dark:placeholder-gray-500">
         </div>
-        <input
-          [formControl]="searchControl"
-          type="text"
-          placeholder="Bauteilnummer oder Farbe..."
-          class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors
-                     placeholder-gray-400 dark:placeholder-gray-500">
-      </div>
 
-      <!-- Farbfilter -->
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <fa-icon icon="filter" class="text-gray-400"></fa-icon>
+        <!-- Farbfilter -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <fa-icon icon="palette" class="text-gray-400"></fa-icon>
+          </div>
+          <select
+            [(ngModel)]="selectedColor"
+            (change)="applyFilters()"
+            class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white appearance-none
+                   focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="">Alle Farben</option>
+            <option value="red">Rot</option>
+            <option value="green">Grün</option>
+            <option value="blue">Blau</option>
+            <option value="yellow">Gelb</option>
+          </select>
         </div>
-        <select
-          [(ngModel)]="selectedColor"
-          (change)="applyFilters()"
-          class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white appearance-none
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
-          <option value="">Alle Farben</option>
-          <option value="red">Rot</option>
-          <option value="green">Grün</option>
-          <option value="blue">Blau</option>
-          <option value="yellow">Gelb</option>
-        </select>
-      </div>
 
-      <!-- Datumsfilter -->
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <fa-icon icon="calendar" class="text-gray-400"></fa-icon>
+        <!-- Datumsfilter -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <fa-icon icon="calendar" class="text-gray-400"></fa-icon>
+          </div>
+          <input
+            [(ngModel)]="selectedDate"
+            (change)="applyFilters()"
+            type="date"
+            class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                   focus:ring-2 focus:ring-blue-500 focus:border-transparent">
         </div>
-        <input
-          [(ngModel)]="selectedDate"
-          (change)="applyFilters()"
-          type="date"
-          class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
       </div>
-    </div>
 
-    <!-- Quick Actions -->
-    <div class="flex space-x-2 mt-4">
-      <button
-        (click)="clearFilters()"
-        class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-        Filter zurücksetzen
-      </button>
-      <button
-        (click)="refreshData()"
-        [disabled]="isLoading"
-        class="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-md hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors disabled:opacity-50">
-        <fa-icon icon="refresh" [class.animate-spin]="isLoading" class="mr-1"></fa-icon>
-        Aktualisieren
-      </button>
-    </div>
-  </div>
-
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex items-center justify-center py-8">
-    <fa-icon icon="refresh" class="animate-spin text-2xl text-blue-600 dark:text-blue-400 mr-2"></fa-icon>
-    <span class="text-gray-600 dark:text-gray-400">Daten werden geladen...</span>
-  </div>
-
-  <!-- Empty State -->
-  <div *ngIf="!isLoading && filteredData.length === 0" class="text-center py-8">
-    <fa-icon icon="database" class="text-4xl text-gray-400 mb-4"></fa-icon>
-    <p class="text-gray-500 dark:text-gray-400">Keine Messdaten gefunden</p>
-    <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">
-      {{ messdaten.length === 0 ? 'Noch keine Daten vorhanden' : 'Versuchen Sie andere Filterkriterien' }}
-    </p>
-  </div>
-
-  <!-- Tabelle -->
-  <div *ngIf="!isLoading && filteredData.length > 0" class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-      <thead class="bg-gray-50 dark:bg-gray-900">
-      <tr>
-        <th
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
-          (click)="sortBy('partNumber')">
-          <div class="flex items-center space-x-1">
-            <span>Bauteilnummer</span>
-            <fa-icon icon="filter" class="text-xs"></fa-icon>
-          </div>
-        </th>
-        <th
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-          Farbe
-        </th>
-        <th
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
-          (click)="sortBy('energyUsage')">
-          <div class="flex items-center space-x-1">
-            <span>Energieverbrauch</span>
-            <fa-icon icon="filter" class="text-xs"></fa-icon>
-          </div>
-        </th>
-        <th
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
-          (click)="sortBy('createdAt')">
-          <div class="flex items-center space-x-1">
-            <span>Datum</span>
-            <fa-icon icon="filter" class="text-xs"></fa-icon>
-          </div>
-        </th>
-        <th
-          class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-          Aktionen
-        </th>
-      </tr>
-      </thead>
-      <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-      <tr *ngFor="let item of paginatedData; trackBy: trackByPartNumber"
-          class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-          {{ item.partNumber }}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      [class]="getColorClass(item.color)">
-                  <span class="w-2 h-2 rounded-full mr-1" [style.background-color]="item.color"></span>
-                  {{ getColorName(item.color) }}
-                </span>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-          <div class="flex items-center">
-            <fa-icon icon="bolt" class="text-yellow-500 mr-1 text-xs"></fa-icon>
-            {{ item.energyUsage }} kWh
-          </div>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-          {{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-          <button
-            (click)="viewDetails(item)"
-            class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-3">
-            <fa-icon icon="eye"></fa-icon>
-          </button>
-          <button
-            (click)="deleteItem(item)"
-            class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">
-            <fa-icon icon="times"></fa-icon>
-          </button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  <div *ngIf="!isLoading && filteredData.length > pageSize"
-       class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-    <div class="flex items-center justify-between">
-      <div class="text-sm text-gray-700 dark:text-gray-300">
-        Zeige {{ (currentPage - 1) * pageSize + 1 }} bis {{ Math.min(currentPage * pageSize, filteredData.length) }}
-        von {{ filteredData.length }} Einträgen
-      </div>
+      <!-- Quick Actions -->
       <div class="flex space-x-2">
         <button
-          (click)="previousPage()"
-          [disabled]="currentPage === 1"
-          class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-          Zurück
+          (click)="clearFilters()"
+          class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition-colors duration-200
+                 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+          <fa-icon icon="times" class="mr-2"></fa-icon>
+          Filter zurücksetzen
         </button>
-        <span class="px-3 py-1 text-sm text-gray-700 dark:text-gray-300">
+        <button
+          (click)="refreshData()"
+          [disabled]="isLoading"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400
+                 text-white rounded-md transition-colors duration-200
+                 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <fa-icon icon="refresh" [class.animate-spin]="isLoading" class="mr-2"></fa-icon>
+          Aktualisieren
+        </button>
+      </div>
+
+      <!-- Statistics -->
+      <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            {{ filteredData.length }}
+          </div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Einträge gefunden</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <div class="flex items-center justify-center">
+        <fa-icon icon="refresh" class="animate-spin text-2xl text-blue-600 dark:text-blue-400 mr-3"></fa-icon>
+        <span class="text-gray-600 dark:text-gray-400">Daten werden geladen...</span>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredData.length === 0" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <div class="text-center">
+        <fa-icon icon="database" class="text-4xl text-gray-400 mb-4"></fa-icon>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Keine Messdaten gefunden</h3>
+        <p class="text-gray-500 dark:text-gray-400 mb-4">
+          {{ messdaten.length === 0 ? 'Noch keine Daten vorhanden' : 'Versuchen Sie andere Filterkriterien' }}
+        </p>
+        <button
+          *ngIf="messdaten.length > 0"
+          (click)="clearFilters()"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">
+          Filter zurücksetzen
+        </button>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div *ngIf="!isLoading && filteredData.length > 0" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-900">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+              (click)="sortBy('partNumber')">
+              <div class="flex items-center space-x-1">
+                <span>Bauteilnummer</span>
+                <fa-icon icon="sort" class="text-xs"></fa-icon>
+              </div>
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Farbe
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+              (click)="sortBy('energyUsage')">
+              <div class="flex items-center space-x-1">
+                <span>Energieverbrauch</span>
+                <fa-icon icon="sort" class="text-xs"></fa-icon>
+              </div>
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+              (click)="sortBy('createdAt')">
+              <div class="flex items-center space-x-1">
+                <span>Datum</span>
+                <fa-icon icon="sort" class="text-xs"></fa-icon>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tr *ngFor="let item of paginatedData; trackBy: trackByPartNumber"
+              class="hover:bg-gray-50 dark:hover:bg-gray-700">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+              {{ item.partNumber }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [class]="getColorClass(item.color)">
+                <span class="w-2 h-2 rounded-full mr-1" [style.background-color]="item.color"></span>
+                {{ getColorName(item.color) }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+              <div class="flex items-center">
+                <fa-icon icon="bolt" class="text-yellow-500 mr-2 text-xs"></fa-icon>
+                {{ item.energyUsage }} kWh
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              {{ item.timestamp | date:'dd.MM.yyyy HH:mm' }}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="filteredData.length > pageSize" class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-700 dark:text-gray-300">
+            Zeige {{ (currentPage - 1) * pageSize + 1 }} bis {{ Math.min(currentPage * pageSize, filteredData.length) }}
+            von {{ filteredData.length }} Einträgen
+          </div>
+          <div class="flex space-x-2">
+            <button
+              (click)="previousPage()"
+              [disabled]="currentPage === 1"
+              class="px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+              Zurück
+            </button>
+            <span class="px-3 py-1 text-sm text-gray-700 dark:text-gray-300">
               Seite {{ currentPage }} von {{ totalPages }}
             </span>
-        <button
-          (click)="nextPage()"
-          [disabled]="currentPage === totalPages"
-          class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-          Weiter
-        </button>
+            <button
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages"
+              class="px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+              Weiter
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

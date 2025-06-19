@@ -2,8 +2,7 @@ export interface Part {
   partNumber: string;
   color: 'red' | 'green' | 'blue' | 'yellow';
   energyUsage: number;
-  createdAt?: string;
-  updatedAt?: string;
+  timestamp?: string;
 }
 
 export interface CreatePartRequest {

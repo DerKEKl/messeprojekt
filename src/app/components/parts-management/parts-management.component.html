@@ -1,30 +1,24 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
   <app-navigation></app-navigation>
 
-  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <!-- Page Header -->
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
     <div class="mb-8">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Bauteile-Verwaltung</h1>
-          <p class="mt-2 text-gray-600 dark:text-gray-400">
-            Verwalten Sie Ihre Produktionsbauteile und deren Eigenschaften
-          </p>
-        </div>
-        <button
-          (click)="toggleForm()"
-          class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
-          <fa-icon icon="plus"></fa-icon>
-          <span>Neues Bauteil</span>
-        </button>
-      </div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <fa-icon icon="microchip" class="text-blue-500 mr-3"></fa-icon>
+        Bauteile-Verwaltung
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">
+        Verwalten Sie Ihre Produktionsbauteile und deren Eigenschaften
+      </p>
     </div>
 
     <!-- Add/Edit Form -->
     <div *ngIf="showForm"
-         class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8">
+         class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
       <div class="p-6 border-b border-gray-200 dark:border-gray-700">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+          <fa-icon icon="plus" class="text-green-500 mr-2"></fa-icon>
           {{ editingPart ? 'Bauteil bearbeiten' : 'Neues Bauteil hinzufügen' }}
         </h2>
       </div>
@@ -41,7 +35,7 @@
               formControlName="partNumber"
               type="text"
               placeholder="z.B. B-001"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                      bg-white dark:bg-gray-700 text-gray-900 dark:text-white
                      focus:ring-2 focus:ring-blue-500 focus:border-transparent
                      placeholder-gray-400 dark:placeholder-gray-500"
@@ -57,19 +51,24 @@
             <label for="color" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Farbe
             </label>
-            <select
-              id="color"
-              formControlName="color"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              [class.border-red-500]="partForm.get('color')?.invalid && partForm.get('color')?.touched">
-              <option value="">Farbe wählen</option>
-              <option value="red">Rot</option>
-              <option value="green">Grün</option>
-              <option value="blue">Blau</option>
-              <option value="yellow">Gelb</option>
-            </select>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <fa-icon icon="palette" class="text-gray-400"></fa-icon>
+              </div>
+              <select
+                id="color"
+                formControlName="color"
+                class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white appearance-none
+                       focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                [class.border-red-500]="partForm.get('color')?.invalid && partForm.get('color')?.touched">
+                <option value="">Farbe wählen</option>
+                <option value="red">Rot</option>
+                <option value="green">Grün</option>
+                <option value="blue">Blau</option>
+                <option value="yellow">Gelb</option>
+              </select>
+            </div>
             <div *ngIf="partForm.get('color')?.invalid && partForm.get('color')?.touched"
                  class="mt-1 text-sm text-red-600 dark:text-red-400">
               Farbe ist erforderlich
@@ -81,19 +80,24 @@
             <label for="energyUsage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Energieverbrauch (kWh)
             </label>
-            <input
-              id="energyUsage"
-              formControlName="energyUsage"
-              type="number"
-              step="0.1"
-              min="0.1"
-              max="10"
-              placeholder="z.B. 0.2"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                     placeholder-gray-400 dark:placeholder-gray-500"
-              [class.border-red-500]="partForm.get('energyUsage')?.invalid && partForm.get('energyUsage')?.touched">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <fa-icon icon="bolt" class="text-gray-400"></fa-icon>
+              </div>
+              <input
+                id="energyUsage"
+                formControlName="energyUsage"
+                type="number"
+                step="0.1"
+                min="0.1"
+                max="10"
+                placeholder="z.B. 0.2"
+                class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                       placeholder-gray-400 dark:placeholder-gray-500"
+                [class.border-red-500]="partForm.get('energyUsage')?.invalid && partForm.get('energyUsage')?.touched">
+            </div>
             <div *ngIf="partForm.get('energyUsage')?.invalid && partForm.get('energyUsage')?.touched"
                  class="mt-1 text-sm text-red-600 dark:text-red-400">
               Energieverbrauch muss zwischen 0.1 und 10 kWh liegen
@@ -106,13 +110,14 @@
           <button
             type="button"
             (click)="resetForm()"
-            class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium transition-colors">
+            class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md font-medium transition-colors">
+            <fa-icon icon="times" class="mr-2"></fa-icon>
             Abbrechen
           </button>
           <button
             type="submit"
             [disabled]="partForm.invalid || isSubmitting"
-            class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors disabled:cursor-not-allowed">
+            class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-md font-medium transition-colors disabled:cursor-not-allowed">
             <fa-icon [icon]="isSubmitting ? 'refresh' : (editingPart ? 'edit' : 'plus')"
                      [class.animate-spin]="isSubmitting"></fa-icon>
             <span>{{ isSubmitting ? 'Wird gespeichert...' : (editingPart ? 'Aktualisieren' : 'Hinzufügen') }}</span>
@@ -121,79 +126,129 @@
       </form>
     </div>
 
-    <!-- Filter Section -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8">
-      <div class="p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Search -->
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <fa-icon icon="search" class="text-gray-400"></fa-icon>
-            </div>
-            <input
-              [(ngModel)]="searchTerm"
-              (input)="applyFilters()"
-              type="text"
-              placeholder="Bauteilnummer oder Farbe suchen..."
-              class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors
-                     placeholder-gray-400 dark:placeholder-gray-500">
-          </div>
+    <!-- Action Button -->
+    <div class="mb-8">
+      <button
+        (click)="toggleForm()"
+        class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        <fa-icon icon="plus"></fa-icon>
+        <span>Neues Bauteil</span>
+      </button>
+    </div>
 
-          <!-- Color Filter -->
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <fa-icon icon="filter" class="text-gray-400"></fa-icon>
-            </div>
-            <select
-              [(ngModel)]="selectedColor"
-              (change)="applyFilters()"
-              class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white appearance-none
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
-              <option value="">Alle Farben</option>
-              <option value="red">Rot</option>
-              <option value="green">Grün</option>
-              <option value="blue">Blau</option>
-              <option value="yellow">Gelb</option>
-            </select>
+    <!-- Filter Section -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <fa-icon icon="filter" class="text-green-500 mr-2"></fa-icon>
+        Filter
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- Search -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <fa-icon icon="search" class="text-gray-400"></fa-icon>
           </div>
+          <input
+            [(ngModel)]="searchTerm"
+            (input)="applyFilters()"
+            type="text"
+            placeholder="Bauteilnummer oder Farbe suchen..."
+            class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                   focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors
+                   placeholder-gray-400 dark:placeholder-gray-500">
+        </div>
+
+        <!-- Color Filter -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <fa-icon icon="palette" class="text-gray-400"></fa-icon>
+          </div>
+          <select
+            [(ngModel)]="selectedColor"
+            (change)="applyFilters()"
+            class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white appearance-none
+                   focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+            <option value="">Alle Farben</option>
+            <option value="red">Rot</option>
+            <option value="green">Grün</option>
+            <option value="blue">Blau</option>
+            <option value="yellow">Gelb</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex space-x-2">
+        <button
+          (click)="resetForm()"
+          class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition-colors duration-200
+                 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+          <fa-icon icon="times" class="mr-2"></fa-icon>
+          Filter zurücksetzen
+        </button>
+        <button
+          (click)="loadParts()"
+          [disabled]="isLoading"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400
+                 text-white rounded-md transition-colors duration-200
+                 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <fa-icon icon="refresh" [class.animate-spin]="isLoading" class="mr-2"></fa-icon>
+          Aktualisieren
+        </button>
+      </div>
+
+      <!-- Statistics -->
+      <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            {{ filteredParts.length }}
+          </div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Bauteile gefunden</div>
         </div>
       </div>
     </div>
 
-    <!-- Parts List -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-            Bauteile-Liste
-          </h2>
-          <span
-            class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
-            {{ filteredParts.length }} Bauteile
-          </span>
-        </div>
-      </div>
-
-      <!-- Loading State -->
-      <div *ngIf="isLoading" class="flex items-center justify-center py-12">
-        <fa-icon icon="refresh" class="animate-spin text-3xl text-blue-600 dark:text-blue-400 mr-3"></fa-icon>
+    <!-- Loading State -->
+    <div *ngIf="isLoading"
+         class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <div class="flex items-center justify-center">
+        <fa-icon icon="refresh" class="animate-spin text-2xl text-blue-600 dark:text-blue-400 mr-3"></fa-icon>
         <span class="text-gray-600 dark:text-gray-400">Bauteile werden geladen...</span>
       </div>
+    </div>
 
-      <!-- Empty State -->
-      <div *ngIf="!isLoading && filteredParts.length === 0" class="text-center py-12">
-        <fa-icon icon="database" class="text-5xl text-gray-400 mb-4"></fa-icon>
-        <p class="text-gray-500 dark:text-gray-400 text-lg">Keine Bauteile gefunden</p>
-        <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredParts.length === 0"
+         class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <div class="text-center">
+        <fa-icon icon="database" class="text-4xl text-gray-400 mb-4"></fa-icon>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Keine Bauteile gefunden</h3>
+        <p class="text-gray-500 dark:text-gray-400 mb-4">
           {{ parts.length === 0 ? 'Fügen Sie Ihr erstes Bauteil hinzu' : 'Versuchen Sie andere Suchkriterien' }}
         </p>
+        <button
+          *ngIf="parts.length > 0"
+          (click)="applyFilters()"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">
+          Filter zurücksetzen
+        </button>
+      </div>
+    </div>
+
+    <!-- Parts Grid -->
+    <div *ngIf="!isLoading && filteredParts.length > 0"
+         class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+          <fa-icon icon="microchip" class="text-blue-500 mr-2"></fa-icon>
+          Bauteile-Liste
+        </h2>
       </div>
 
-      <!-- Parts Grid -->
-      <div *ngIf="!isLoading && filteredParts.length > 0" class="p-6">
+      <div class="p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div *ngFor="let part of filteredParts"
                class="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
@@ -203,18 +258,6 @@
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ part.partNumber }}
               </h3>
-              <div class="flex space-x-2">
-                <button
-                  (click)="editPart(part)"
-                  class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 rounded-md transition-colors">
-                  <fa-icon icon="edit"></fa-icon>
-                </button>
-                <button
-                  (click)="deletePart(part)"
-                  class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900 rounded-md transition-colors">
-                  <fa-icon icon="trash"></fa-icon>
-                </button>
-              </div>
             </div>
 
             <!-- Part Details -->
@@ -232,14 +275,14 @@
                 <span class="text-gray-600 dark:text-gray-400">Energieverbrauch:</span>
                 <div class="flex items-center">
                   <fa-icon icon="bolt" class="text-yellow-500 mr-1 text-sm"></fa-icon>
-                  <span class="font-semibold">{{ part.energyUsage }} kWh</span>
+                  <span class="font-semibold text-sm text-gray-500 dark:text-gray-400">{{ part.energyUsage }} kWh</span>
                 </div>
               </div>
 
-              <div *ngIf="part.createdAt" class="flex items-center justify-between">
+              <div *ngIf="part.timestamp" class="flex items-center justify-between">
                 <span class="text-gray-600 dark:text-gray-400">Erstellt:</span>
                 <span class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ part.createdAt | date:'dd.MM.yyyy' }}
+                  {{ part.timestamp | date:'dd.MM.yyyy' }}
                 </span>
               </div>
             </div>
@@ -247,5 +290,5 @@
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>

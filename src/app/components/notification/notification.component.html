@@ -1,0 +1,27 @@
+<div class="fixed top-4 right-4 z-50 space-y-2">
+    <div
+            *ngFor="let notification of notifications; trackBy: trackByNotificationId"
+            class="notification"
+            [class]="getNotificationClasses(notification)"
+    >
+        <div class="flex items-start">
+            <fa-icon
+                    [icon]="getNotificationIcon(notification.type)"
+                    class="flex-shrink-0 w-5 h-5 mt-0.5 mr-3"
+                    [class]="getIconClasses(notification.type)"
+            ></fa-icon>
+
+            <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-semibold">{{ notification.title }}</h4>
+                <p class="text-sm opacity-90 mt-1">{{ notification.message }}</p>
+            </div>
+
+            <button
+                    (click)="removeNotification(notification.id)"
+                    class="flex-shrink-0 ml-3 text-white/70 hover:text-white transition-colors"
+            >
+                <fa-icon icon="times" class="w-4 h-4"></fa-icon>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {BehaviorSubject, Observable, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {environment} from '../../environments/environment';
+import {NotificationService} from './notification.service';
 
 export interface LoginResponse {
   token: string;
@@ -30,7 +31,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {
     this.initializeAuth();
   }
@@ -48,6 +50,10 @@ export class AuthService {
         this.userSubject.next(JSON.parse(user));
       } catch (error) {
         console.error('Error parsing user data:', error);
+        this.notificationService.error(
+          'Authentifizierungsfehler',
+          'Gespeicherte Benutzerdaten sind beschädigt. Bitte melden Sie sich erneut an.'
+        );
         this.logout();
       }
     }
@@ -64,9 +70,30 @@ export class AuthService {
             localStorage.setItem('user', JSON.stringify(response.user));
             this.userSubject.next(response.user);
           }
+
+          setTimeout(() => {
+            this.notificationService.success(
+              'Anmeldung erfolgreich',
+              `Willkommen zurück, ${response.user?.username || 'Benutzer'}!`, 1000
+            );
+          }, 1000);
         }),
-        catchError(error => {
+        catchError((error: HttpErrorResponse) => {
           console.error('Login error:', error);
+
+          let errorMessage = 'Ein unbekannter Fehler ist aufgetreten.';
+
+          if (error.status === 401) {
+            errorMessage = 'Ungültige Anmeldedaten. Bitte überprüfen Sie Benutzername und Passwort.';
+          } else if (error.status === 403) {
+            errorMessage = 'Zugriff verweigert. Sie haben keine Berechtigung.';
+          } else if (error.status === 0 || error.status === 500) {
+            errorMessage = 'Server nicht erreichbar. Bitte versuchen Sie es später erneut.';
+          } else if (error.error?.message) {
+            errorMessage = error.error.message;
+          }
+
+          this.notificationService.error('Anmeldung fehlgeschlagen', errorMessage);
           return throwError(() => error);
         })
       );
@@ -77,6 +104,12 @@ export class AuthService {
     localStorage.removeItem('user');
     this.tokenSubject.next(null);
     this.userSubject.next(null);
+
+    this.notificationService.info(
+      'Abgemeldet',
+      'Sie wurden erfolgreich abgemeldet.'
+    );
+
     this.router.navigate(['/login']);
   }
 
@@ -93,11 +126,14 @@ export class AuthService {
     if (!token) return false;
 
     try {
-      // Einfache Token-Validierung
       const payload = JSON.parse(atob(token.split('.')[1]));
       const currentTime = Math.floor(Date.now() / 1000);
       return payload.exp > currentTime;
     } catch (error) {
+      this.notificationService.warning(
+        'Token ungültig',
+        'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.'
+      );
       return false;
     }
   }

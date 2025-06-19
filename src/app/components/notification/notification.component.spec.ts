@@ -1,18 +1,18 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {LiveDashboardComponent} from './live-dashboard.component';
+import {NotificationComponent} from './notification.component';
 
-describe('LiveDashboardComponent', () => {
-  let component: LiveDashboardComponent;
-  let fixture: ComponentFixture<LiveDashboardComponent>;
+describe('NotificationComponent', () => {
+  let component: NotificationComponent;
+  let fixture: ComponentFixture<NotificationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LiveDashboardComponent]
+      imports: [NotificationComponent]
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(LiveDashboardComponent);
+    fixture = TestBed.createComponent(NotificationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

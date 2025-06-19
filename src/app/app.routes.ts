@@ -26,9 +26,9 @@ routes = [
     canActivate: [AuthGuard]
   },
   {
-    canActivate: [AuthGuard],
+    path: 'statistics',
     component: StatisticsComponent,
-    path: 'statistics'
+    canActivate: [AuthGuard]
   },
   {
     path: 'parts',

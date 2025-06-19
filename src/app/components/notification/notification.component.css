@@ -1,0 +1,21 @@
+.notification {
+  @apply max-w-sm w-full p-4 rounded-lg shadow-lg backdrop-blur-sm;
+  @apply transform transition-all duration-300 ease-in-out;
+  @apply border-l-4;
+}
+
+.notification-success {
+  @apply bg-green-600/90 border-green-400 text-white;
+}
+
+.notification-error {
+  @apply bg-red-600/90 border-red-400 text-white;
+}
+
+.notification-warning {
+  @apply bg-yellow-600/90 border-yellow-400 text-white;
+}
+
+.notification-info {
+  @apply bg-blue-600/90 border-blue-400 text-white;
+}
