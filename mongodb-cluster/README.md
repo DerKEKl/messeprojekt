@@ -84,6 +84,7 @@ docker-compose -f mongo_router/docker-compose.yaml up -d
 Shards zum Cluster hinzufügen
 ```
 mongosh mongodb://localhost:30000
+
 sh.addShard("shard1_rs/<ip>:20001,<ip>:20002,<ip>:20003")
 sh.addShard("shard2_rs/<ip>:20004,<ip>:20005,<ip>:20006")
 ```
@@ -98,7 +99,7 @@ Collection sharden
 sh.shardCollection("daten.parts", { partNumber: "hashed" })
 ```
 Sharded die Collection `parts` in der Datenbank `daten`, anhand des Shard-Key-Feldes `partNumber` und nutzt hier die Funktion `hashed`<br>
-Wir haben uns für die Funktion `hashed` entschieden, weil diese einen Hashwert berechnet und anhand diesem die Daten gleichmäßig auf die beiden Shars aufteilt. So benötigen wir kein Loadbalancing.
+Wir haben uns für die Funktion `hashed` entschieden, weil diese einen Hashwert berechnet und anhand diesem die Daten gleichmäßig auf die beiden Shards aufteilt. So benötigen wir kein Loadbalancing.
 ## Statusabfragen
 Sharding-Status anzeigen
 ```
