@@ -15,10 +15,39 @@ Das Cluster besteht aus mehreren Komponenten
 ```
 git clone https://github.com/DerKEKl/messeprojekt/tree/master/mongodb-cluster
 cd /mongodb-cluster
+
 ```
 
 ## Konfigurationsserver
 Folgender Docker-Befehl startet den Konfigurationsserver
 ```
 docker-compose -f config_server/docker-compose.yaml up -d
+```
+Sobald die Instanzen laufen, kann man sich mit dem Container verbinden
+```
+mongosh mongodb://localhost:10001
+
+```
+Innerhalb des Containers können die Mitglieder konfiguriert werden
+```
+rs.initiate({
+  _id: "config_rs",
+  configsvr: true,
+  members: [
+    { _id: 0, host: "<ip>:10001" },
+    { _id: 1, host: "<ip>:10002" },
+    { _id: 2, host: "<ip>:10003" }
+  ]
+})
+
+```
+Der Status der Replikasets kann mit dem Befehl `rs.status()` überprüft werden
+
+## Shard-Server
+Die gleiche Vorgehensweise auch für die `Shard-Server 1&2`
+
+```
+docker-compose -f shard_server1/docker-compose.yaml up -d
+docker-compose -f shard_server2/docker-compose.yaml up -d
+
 ```
