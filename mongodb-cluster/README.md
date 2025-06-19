@@ -44,10 +44,54 @@ rs.initiate({
 Der Status der Replikasets kann mit dem Befehl `rs.status()` überprüft werden
 
 ## Shard-Server
-Die gleiche Vorgehensweise auch für die `Shard-Server 1&2`
+Die gleiche Vorgehensweise auch für die beiden `Shard-Server`
 
 ```
 docker-compose -f shard_server1/docker-compose.yaml up -d
 docker-compose -f shard_server2/docker-compose.yaml up -d
+
+```
+`Shard1`
+```
+mongosh mongodb://localhost:20001
+rs.initiate({
+  _id: "shard1_rs",
+  members: [
+    { _id: 0, host: "<ip>:20001" },
+    { _id: 1, host: "<ip>:20002" },
+    { _id: 2, host: "<ip>:20003" }
+  ]
+})
+
+```
+`Shard2`
+```
+
+rs.initiate({
+  _id: "shard2_rs",
+  members: [
+    { _id: 0, host: "<ip>:20004" },
+    { _id: 1, host: "<ip>:20005" },
+    { _id: 2, host: "<ip>:20006" }
+  ]
+})
+
+
+```
+## Mongo-Router
+Mongo-Router starten
+```
+
+docker-compose -f mongo_router/docker-compose.yaml up -d
+
+
+```
+Shards zum Cluster hinzufügen
+```
+
+mongosh mongodb://localhost:30000
+sh.addShard("shard1_rs/<ip>:20001,<ip>:20002,<ip>:20003")
+sh.addShard("shard2_rs/<ip>:20004,<ip>:20005,<ip>:20006")
+
 
 ```
