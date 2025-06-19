@@ -11,7 +11,10 @@ sudo add-apt-repository ppa:mosquitto-dev/mosquitto-ppa -y
 ```
 ## Mosquitto und Clients installieren
 ```
+sudo apt update
 sudo apt install mosquitto mosquitto-clients -y
+sudo systemctl enable mosquitto
+sudo systemctl start mosquitto
 ```
 ## Status von Mosquitto überprüfen
 ```
@@ -21,6 +24,14 @@ sudo systemctl status mosquitto
 ```
 sudo mkdir -p /etc/mosquitto/log /etc/mosquitto/config
 sudo touch /etc/mosquitto/log/mosquitto.log
+```
+## Benutzername & Passwort vergeben
+```
+sudo mosquitto_passwd -c /etc/mosquitto/config/pwfile <mqtt-benutzername>
+```
+## Berechtigungen ändern
+```
+chown mosquitto:mosquitto /etc/mosquitto/config/pwfile
 ```
 ## Mosquitto.conf öffnen & folgende Parameter ändern
 ```
@@ -47,10 +58,6 @@ password_file /etc/mosquitto/config/pwfile
 
 max_packet_size 268435455
 
-```
-## Benutzername & Passwort vergeben
-```
-sudo mosquitto_passwd -c /etc/mosquitto/config/pwfile <mqtt-benutzername>
 ```
 ## Mosquitto neu starten
 ```
