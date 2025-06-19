@@ -50,6 +50,7 @@ docker-compose -f shard_server2/docker-compose.yaml up -d
 `Shard1`
 ```
 mongosh mongodb://localhost:20001
+
 rs.initiate({
   _id: "shard1_rs",
   members: [
@@ -61,6 +62,8 @@ rs.initiate({
 ```
 `Shard2`
 ```
+mongosh mongodb://localhost:20004
+
 rs.initiate({
   _id: "shard2_rs",
   members: [
