@@ -58,7 +58,6 @@ rs.initiate({
     { _id: 2, host: "<ip>:20003" }
   ]
 })
-
 ```
 `Shard2`
 ```
@@ -70,52 +69,34 @@ rs.initiate({
     { _id: 2, host: "<ip>:20006" }
   ]
 })
-
 ```
 ## Mongo-Router
 Mongo-Router starten
 ```
-
 docker-compose -f mongo_router/docker-compose.yaml up -d
-
-
 ```
 Shards zum Cluster hinzufügen
 ```
-
 mongosh mongodb://localhost:30000
 sh.addShard("shard1_rs/<ip>:20001,<ip>:20002,<ip>:20003")
 sh.addShard("shard2_rs/<ip>:20004,<ip>:20005,<ip>:20006")
-
-
 ```
 
 ## Sharding einer Collection
 Datenbank erstellen
 ```
-
 use daten
-
-
 ```
 Collection sharden
 ```
-
 sh.shardCollection("daten.parts", { partNumber: "hashed" })
-
-
 ```
 ## Statusabfragen
 Sharding-Status anzeigen
 ```
-
 sh.status()
-
 ```
 Datenverteilung anzeigen
 ```
-
 db.parts.getShardDistribution()
-
-
 ```
