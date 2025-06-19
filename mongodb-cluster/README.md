@@ -5,6 +5,7 @@ Das Cluster besteht aus mehreren Komponenten
 * Konfigurationsserver
 * Shard-Server
 * Mongo-Router
+![mongodb-cluster](https://github.com/DerKEKl/messeprojekt/blob/3bf634d2ba132c40ab50c67a56795ea6710bc7b4/mongodb-cluster.jpg)
 
 
 ## Voraussetzungen
@@ -14,8 +15,8 @@ Das Cluster besteht aus mehreren Komponenten
 
 ## Repository klonen
 ```
-git clone https://github.com/DerKEKl/messeprojekt/tree/master/mongodb-cluster
-cd mongodb-cluster
+git clone https://github.com/DerKEKl/messeprojekt
+cd messeprojekt/mongodb-cluster
 ```
 
 ## Konfigurationsserver
