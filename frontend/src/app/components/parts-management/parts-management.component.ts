@@ -4,9 +4,9 @@ import {Subscription} from 'rxjs';
 import {CreatePartRequest, Part} from '../../models/part';
 import {PartsService} from '../../services/parts.service';
 import {CommonModule} from '@angular/common';
-import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {NavigationComponent} from '../navigation/navigation.component';
-import {faEdit, faPlus, faSave, faSearch, faTimes, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {NotificationService} from '../../services/notification.service';
 
 @Component({
   selector: 'app-parts-management',
@@ -31,9 +31,8 @@ export class PartsManagementComponent implements OnInit, OnDestroy {
   constructor(
     private partsService: PartsService,
     private formBuilder: FormBuilder,
-    library: FaIconLibrary
+    private notificationService: NotificationService
   ) {
-    library.addIcons(faPlus, faSearch, faEdit, faTrash, faTimes, faSave);
     this.partForm = this.formBuilder.group({
       partNumber: ['', [Validators.required, Validators.pattern(/^[A-Z]-\d{3}$/)]],
       color: ['', Validators.required],
@@ -50,7 +49,7 @@ export class PartsManagementComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  private loadParts() {
+  protected loadParts() {
     this.isLoading = true;
     this.partsService.getAllParts().subscribe({
       next: (parts) => {
@@ -120,30 +119,6 @@ export class PartsManagementComponent implements OnInit, OnDestroy {
           }
         });
       }
-    }
-  }
-
-  editPart(part: Part) {
-    this.editingPart = part;
-    this.partForm.patchValue({
-      partNumber: part.partNumber,
-      color: part.color,
-      energyUsage: part.energyUsage
-    });
-    this.showForm = true;
-  }
-
-  deletePart(part: Part) {
-    if (confirm(`Möchten Sie das Bauteil ${part.partNumber} wirklich löschen?`)) {
-      this.partsService.deletePart(part.partNumber).subscribe({
-        next: () => {
-          // Parts werden automatisch über parts$ aktualisiert
-        },
-        error: (error) => {
-          console.error('Error deleting part:', error);
-          alert('Fehler beim Löschen des Bauteils');
-        }
-      });
     }
   }
 

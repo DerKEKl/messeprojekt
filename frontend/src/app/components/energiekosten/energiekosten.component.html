@@ -1,165 +1,233 @@
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-  <!-- Header -->
-  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <fa-icon icon="bolt" class="text-yellow-600 dark:text-yellow-400 text-xl"></fa-icon>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Energiekosten</h2>
-      </div>
-      <button
-        (click)="refreshData()"
-        [disabled]="isLoading"
-        class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-        <fa-icon icon="refresh" [class.animate-spin]="isLoading"></fa-icon>
-      </button>
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <app-navigation *ngIf="!isMainPage()"></app-navigation>
+
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <fa-icon icon="bolt" class="text-yellow-500 mr-3"></fa-icon>
+        Energiekosten
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">Übersicht über Energieverbrauch und Produktionsplanung</p>
     </div>
-  </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex items-center justify-center py-8">
-    <fa-icon icon="refresh" class="animate-spin text-2xl text-yellow-600 dark:text-yellow-400 mr-2"></fa-icon>
-    <span class="text-gray-600 dark:text-gray-400">Daten werden geladen...</span>
-  </div>
+    <!-- Today's Costs Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8"
+         *ngIf="todayCosts">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <fa-icon icon="calendar-day" class="text-blue-500 mr-2"></fa-icon>
+        Heutige Kosten
+      </h2>
 
-  <!-- Content -->
-  <div *ngIf="!isLoading" class="p-6 space-y-6">
-    <!-- Today's Costs -->
-    <div *ngIf="todayCosts"
-         class="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900 dark:to-orange-900 rounded-lg p-4">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Heute
-        ({{ todayCosts.date | date:'dd.MM.yyyy' }})</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="text-center">
-          <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">€{{ todayCosts.costs.toFixed(2) }}
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            {{ todayCosts.costs | currency:'EUR':'symbol':'1.2-2' }}
           </div>
           <div class="text-sm text-gray-600 dark:text-gray-400">Gesamtkosten</div>
         </div>
-        <div class="text-center">
-          <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ todayCosts.energyUsage.toFixed(1) }}
+
+        <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+          <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+            {{ todayCosts.parts | number:'1.1-1' }} kWh
           </div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">kWh</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Verbrauch</div>
         </div>
-        <div class="text-center">
-          <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ todayCosts.parts }}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">Teile</div>
+
+        <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+          <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+            {{ todayCosts.averagePrice | currency:'EUR':'symbol':'1.4-4' }}
+          </div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Ø Preis/kWh</div>
         </div>
-        <div class="text-center">
+
+        <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
           <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">
-            €{{ todayCosts.costPerKwh.toFixed(3) }}
+            {{ todayCosts.date | date:'dd.MM.yyyy' }}
           </div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">pro kWh</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Datum</div>
         </div>
       </div>
     </div>
 
-    <!-- Cost Preview Calculator -->
-    <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Kostenvorhersage</h3>
-      <div class="flex items-center space-x-4 mb-4">
-        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Anzahl Teile:</label>
+    <!-- Preview Input - vereinfacht -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <fa-icon icon="calculator" class="text-green-500 mr-2"></fa-icon>
+        Produktionsvorschau (Schätzung)
+      </h2>
+
+      <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
+        <div class="flex items-center">
+          <fa-icon icon="info-circle" class="text-blue-500 mr-2"></fa-icon>
+          <p class="text-sm text-blue-700 dark:text-blue-300">
+            Diese Vorschau basiert auf Erfahrungswerten und dient als grobe Schätzung für die Produktionsplanung.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4 mb-6">
+        <label for="previewCount" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Anzahl Teile:
+        </label>
         <input
-          [(ngModel)]="previewCount"
-          (input)="updatePreview()"
+          id="previewCount"
           type="number"
+          [(ngModel)]="previewCount"
           min="1"
-          max="1000"
-          class="w-24 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          max="10000"
+          class="w-32 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+             focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
         <button
           (click)="updatePreview()"
-          class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm">
+          [disabled]="isLoading"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400
+             text-white rounded-md transition-colors duration-200
+             focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <fa-icon icon="refresh" class="mr-2" [class.animate-spin]="isLoading"></fa-icon>
           Berechnen
         </button>
       </div>
 
-      <div *ngIf="costPreview" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
-          <div class="text-lg font-bold text-yellow-600 dark:text-yellow-400">
-            €{{ costPreview.estimatedCosts.toFixed(2) }}
-          </div>
-          <div class="text-xs text-gray-600 dark:text-gray-400">Geschätzte Kosten</div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
+      <!-- Cost Preview Results -->
+      <div *ngIf="costPreview" class="space-y-6">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div
-            class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ costPreview.estimatedEnergyUsage.toFixed(1) }}
+            class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-medium text-blue-700 dark:text-blue-300">Teile</h4>
+                <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                  {{ formattedPartsCount }}
+                </p>
+                <p class="text-xs text-blue-600 dark:text-blue-400">zu produzieren</p>
+              </div>
+              <fa-icon icon="cog" class="text-2xl text-blue-500"></fa-icon>
+            </div>
           </div>
-          <div class="text-xs text-gray-600 dark:text-gray-400">kWh Verbrauch</div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
+
           <div
-            class="text-lg font-bold text-green-600 dark:text-green-400">{{ costPreview.optimalProductionTime }}
+            class="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-medium text-green-700 dark:text-green-300">Geschätzte Zeit</h4>
+                <p class="text-lg font-bold text-green-900 dark:text-green-100">
+                  {{ costPreview.hoursNeeded }} Stunden
+                </p>
+                <p class="text-sm text-green-600 dark:text-green-400">≈ {{ productionDays }} Tage</p>
+              </div>
+              <fa-icon icon="clock" class="text-2xl text-green-500"></fa-icon>
+            </div>
           </div>
-          <div class="text-xs text-gray-600 dark:text-gray-400">Optimale Zeit</div>
-        </div>
-      </div>
 
-      <!-- Recommendations -->
-      <div *ngIf="costPreview?.recommendations?.length" class="mt-4">
-        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Empfehlungen:</h4>
-        <ul class="space-y-1">
-          <li *ngFor="let recommendation of costPreview?.recommendations">
-              class="flex items-start space-x-2 text-sm text-gray-600 dark:text-gray-400">
-            <fa-icon icon="info" class="text-blue-500 mt-0.5 text-xs"></fa-icon>
-            <span>{{ recommendation }}</span>
-          </li>
-        </ul>
+          <div
+            class="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-medium text-yellow-700 dark:text-yellow-300">Geschätzte Kosten</h4>
+                <p class="text-2xl font-bold text-yellow-900 dark:text-yellow-100"
+                   [class.text-red-500]="!costPreview.estimatedCosts">
+                  {{ formattedEstimatedCosts }}
+                </p>
+                <p class="text-sm text-yellow-600 dark:text-yellow-400">{{ costPerPart }} pro Teil</p>
+              </div>
+              <fa-icon icon="euro-sign" class="text-2xl text-yellow-500"></fa-icon>
+            </div>
+          </div>
+
+          <div
+            class="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-medium text-purple-700 dark:text-purple-300">Energieschätzung</h4>
+                <p class="text-lg font-bold text-purple-900 dark:text-purple-100">
+                  {{ formattedEnergyUsage }} kWh
+                </p>
+                <p class="text-xs text-purple-600 dark:text-purple-400">geschätzt</p>
+              </div>
+              <fa-icon icon="bolt" class="text-2xl text-purple-500"></fa-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zeitschätzung Timeline -->
+        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6"
+             *ngIf="costPreview.startTimestamp && costPreview.endTimestamp">
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <fa-icon icon="calendar-alt" class="text-indigo-500 mr-2"></fa-icon>
+            Zeitschätzung für die Produktion
+          </h4>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-700 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <fa-icon icon="play-circle" class="text-green-500 mr-2"></fa-icon>
+                <span class="font-medium text-gray-900 dark:text-white">Geschätzter Start</span>
+              </div>
+              <p class="text-gray-700 dark:text-gray-300">{{ estimatedStartDate }}</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-700 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <fa-icon icon="stop-circle" class="text-red-500 mr-2"></fa-icon>
+                <span class="font-medium text-gray-900 dark:text-white">Geschätztes Ende</span>
+              </div>
+              <p class="text-gray-700 dark:text-gray-300">{{ estimatedCompletionDate }}</p>
+            </div>
+          </div>
+
+          <div
+            class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <div class="flex items-center">
+              <fa-icon icon="exclamation-triangle" class="text-yellow-500 mr-2"></fa-icon>
+              <span class="text-sm text-yellow-700 dark:text-yellow-300">
+            Zeitangaben sind Schätzungen basierend auf Durchschnittswerten
+          </span>
+            </div>
+          </div>
+
+          <div
+            class="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4 flex items-center mt-4"
+            *ngIf="isLongProduction">
+            <fa-icon icon="clock" class="text-orange-500 mr-3 text-xl"></fa-icon>
+            <div>
+              <p class="font-medium text-orange-800 dark:text-orange-200">Lange Produktionszeit erwartet</p>
+              <p class="text-sm text-orange-600 dark:text-orange-300">Planung in Schichten empfohlen!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6" *ngIf="costPreview.recommendations?.length">
+          <h4 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center">
+            <fa-icon icon="lightbulb" class="text-blue-500 mr-2"></fa-icon>
+            Empfehlungen basierend auf der Schätzung
+          </h4>
+          <ul class="space-y-2">
+            <li *ngFor="let recommendation of costPreview.recommendations"
+                class="flex items-start text-blue-800 dark:text-blue-200">
+              <fa-icon icon="check-circle" class="text-blue-500 mr-2 mt-0.5 flex-shrink-0"></fa-icon>
+              <span>{{ recommendation }}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
-    <!-- Weekly Overview -->
-    <div *ngIf="weeklyCosts?.length" class="space-y-3">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Wochenübersicht</h3>
-      <div class="space-y-2">
-        <div *ngFor="let day of weeklyCosts"
-             class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-          <div class="flex items-center space-x-3">
-            <div class="text-sm font-medium text-gray-900 dark:text-white">
-              {{ day.date | date:'EEEE, dd.MM' }}
-            </div>
-            <div class="text-xs text-gray-500 dark:text-gray-400">
-              {{ day.parts }} Teile
-            </div>
-          </div>
-          <div class="flex items-center space-x-4">
-            <div class="text-sm text-gray-600 dark:text-gray-400">
-              {{ day.energyUsage.toFixed(1) }} kWh
-            </div>
-            <div class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">
-              €{{ day.costs.toFixed(2) }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Weekly Total -->
-      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900 dark:to-indigo-900 rounded-lg p-4">
-        <div class="flex items-center justify-between">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Wochensumme:</span>
-          <div class="flex items-center space-x-4">
-                <span class="text-sm text-gray-600 dark:text-gray-400">
-                  {{ getWeeklyTotal('energyUsage').toFixed(1) }} kWh
-                </span>
-            <span class="text-lg font-bold text-blue-600 dark:text-blue-400">
-                  €{{ getWeeklyTotal('costs').toFixed(2) }}
-                </span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Current Energy Price -->
-    <div *ngIf="currentEnergyPrice" class="bg-green-50 dark:bg-green-900 rounded-lg p-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <fa-icon icon="bolt" class="text-green-600 dark:text-green-400"></fa-icon>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Aktueller Strompreis:</span>
-        </div>
-        <div class="text-lg font-bold text-green-600 dark:text-green-400">
-          {{ currentEnergyPrice.currency }}{{ currentEnergyPrice.price.toFixed(3) }}/kWh
-        </div>
-      </div>
-    </div>
+    <!--    &lt;!&ndash; Refresh Button &ndash;&gt;-->
+    <!--    <div class="text-center">-->
+    <!--      <button-->
+    <!--        (click)="refreshData()"-->
+    <!--        [disabled]="isLoading"-->
+    <!--        class="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400-->
+    <!--               text-white rounded-lg transition-colors duration-200-->
+    <!--               focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">-->
+    <!--        <fa-icon icon="sync-alt" class="mr-2" [class.animate-spin]="isLoading"></fa-icon>-->
+    <!--        Daten aktualisieren-->
+    <!--      </button>-->
+    <!--    </div>-->
   </div>
 </div>
-

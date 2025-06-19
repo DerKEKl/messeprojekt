@@ -1,20 +1,23 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
   <app-navigation></app-navigation>
 
-  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+  <div class="container mx-auto px-4 py-8">
     <!-- Page Header -->
     <div class="mb-8">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Statistiken</h1>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <fa-icon icon="chart-bar" class="text-blue-500 mr-3"></fa-icon>
+            Statistiken
+          </h1>
           <p class="mt-2 text-gray-600 dark:text-gray-400">
-            Detaillierte Auswertungen Ihrer Produktionsdaten
+            Detaillierte Auswertungen der Produktionsdaten
           </p>
         </div>
         <button
           (click)="exportData()"
-          class="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
-          <fa-icon icon="database"></fa-icon>
+          class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
+          <fa-icon icon="download"></fa-icon>
           <span>Daten exportieren</span>
         </button>
       </div>
@@ -22,34 +25,48 @@
 
     <!-- Tab Navigation -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8">
-      <div class="border-b border-gray-200 dark:border-gray-700">
-        <nav class="flex space-x-8 px-6" aria-label="Tabs">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+          Auswertungs-Module
+        </h2>
+      </div>
+
+      <div class="p-2">
+        <nav class="flex space-x-2" aria-label="Tabs">
           <button
             (click)="setActiveTab('daily')"
-            [class]="activeTab === 'daily' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'"
-            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-            <fa-icon icon="calendar" class="mr-2"></fa-icon>
+            [class]="activeTab === 'daily' ?
+              'bg-blue-600 text-white shadow-sm' :
+              'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'"
+            class="flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-colors">
+            <fa-icon icon="calendar-day" class="mr-2"></fa-icon>
             Tagesberichte
           </button>
           <button
             (click)="setActiveTab('weekly')"
-            [class]="activeTab === 'weekly' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'"
-            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-            <fa-icon icon="chart-bar" class="mr-2"></fa-icon>
+            [class]="activeTab === 'weekly' ?
+              'bg-blue-600 text-white shadow-sm' :
+              'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'"
+            class="flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-colors">
+            <fa-icon icon="calendar-week" class="mr-2"></fa-icon>
             Wochenübersicht
           </button>
           <button
             (click)="setActiveTab('monthly')"
-            [class]="activeTab === 'monthly' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'"
-            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-            <fa-icon icon="chart-bar" class="mr-2"></fa-icon>
+            [class]="activeTab === 'monthly' ?
+              'bg-blue-600 text-white shadow-sm' :
+              'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'"
+            class="flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-colors">
+            <fa-icon icon="calendar-alt" class="mr-2"></fa-icon>
             Monatsübersicht
           </button>
           <button
             (click)="setActiveTab('colors')"
-            [class]="activeTab === 'colors' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'"
-            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-            <fa-icon icon="chart-bar" class="mr-2"></fa-icon>
+            [class]="activeTab === 'colors' ?
+              'bg-blue-600 text-white shadow-sm' :
+              'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'"
+            class="flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-colors">
+            <fa-icon icon="palette" class="mr-2"></fa-icon>
             Farbverteilung
           </button>
         </nav>
@@ -57,98 +74,100 @@
     </div>
 
     <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex items-center justify-center py-12">
-      <fa-icon icon="refresh" class="animate-spin text-3xl text-blue-600 dark:text-blue-400 mr-3"></fa-icon>
-      <span class="text-gray-600 dark:text-gray-400">Statistiken werden geladen...</span>
+    <div *ngIf="isLoading"
+         class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-12">
+      <div class="flex flex-col items-center justify-center">
+        <fa-icon icon="refresh" class="animate-spin text-4xl text-blue-600 dark:text-blue-400 mb-4"></fa-icon>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Daten werden geladen...</h3>
+        <p class="text-gray-600 dark:text-gray-400">Statistiken werden verarbeitet</p>
+      </div>
     </div>
 
     <!-- Daily Report Tab -->
     <div *ngIf="activeTab === 'daily' && !isLoading">
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div class="flex items-center space-x-4">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Datum wählen:</label>
-            <input
-              [(ngModel)]="selectedDate"
-              (change)="loadDailyReport()"
-              type="date"
-              class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+              <fa-icon icon="calendar-day" class="mr-3 text-blue-500"></fa-icon>
+              Tagesbericht
+            </h3>
+            <div class="flex items-center space-x-4">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Datum:
+              </label>
+              <input
+                [(ngModel)]="selectedDate"
+                (change)="loadDailyReport()"
+                type="date"
+                class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
           </div>
         </div>
 
-        <div *ngIf="dailyReport" class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-            Tagesbericht für {{ dailyReport.date | date:'dd.MM.yyyy' }}
-          </h3>
+        <!-- No Data Error -->
+        <div *ngIf="dailyError" class="p-12 text-center">
+          <fa-icon icon="chart-line" class="text-5xl text-gray-400 mb-4"></fa-icon>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Keine Daten verfügbar</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            Für das ausgewählte Datum sind keine Produktionsdaten vorhanden.
+          </p>
+          <button
+            (click)="loadDailyReport()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+            <fa-icon icon="refresh" class="mr-2"></fa-icon>
+            Erneut versuchen
+          </button>
+        </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
-              <div class="flex items-center">
-                <fa-icon icon="database" class="text-blue-600 dark:text-blue-400 text-2xl mr-3"></fa-icon>
-                <div>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Teile produziert</p>
-                  <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ dailyReport.partsCount }}</p>
-                </div>
-              </div>
+        <div *ngIf="dailyReport && !dailyError" class="p-6">
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              Bericht für {{ dailyReport.date | date:'EEEE, dd.MM.yyyy' }}
+            </h4>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ dailyReport.partsCount }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Teile produziert</div>
             </div>
 
-            <div class="bg-green-50 dark:bg-green-900 rounded-lg p-4">
-              <div class="flex items-center">
-                <fa-icon icon="check" class="text-green-600 dark:text-green-400 text-2xl mr-3"></fa-icon>
-                <div>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Häufigste Farbe</p>
-                  <p
-                    class="text-2xl font-bold text-green-600 dark:text-green-400">{{ getColorName(dailyReport.mostCommonColor) }}</p>
-                </div>
+            <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div
+                class="text-2xl font-bold text-green-600 dark:text-green-400">{{ getColorName(dailyReport.mostCommonColor) }}
               </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Häufigste Farbe</div>
             </div>
 
-            <div class="bg-yellow-50 dark:bg-yellow-900 rounded-lg p-4">
-              <div class="flex items-center">
-                <fa-icon icon="play" class="text-yellow-600 dark:text-yellow-400 text-2xl mr-3"></fa-icon>
-                <div>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Produktionsstart</p>
-                  <p
-                    class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ dailyReport.productionStart }}</p>
-                </div>
+            <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <div class="text-lg font-bold text-yellow-600 dark:text-yellow-400">{{ dailyReport.productionStart }}
               </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Start</div>
             </div>
 
-            <div class="bg-red-50 dark:bg-red-900 rounded-lg p-4">
-              <div class="flex items-center">
-                <fa-icon icon="stop" class="text-red-600 dark:text-red-400 text-2xl mr-3"></fa-icon>
-                <div>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Produktionsende</p>
-                  <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ dailyReport.productionEnd }}</p>
-                </div>
-              </div>
+            <div class="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              <div class="text-lg font-bold text-red-600 dark:text-red-400">{{ dailyReport.productionEnd }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Ende</div>
             </div>
           </div>
 
-          <div *ngIf="dailyReport.totalEnergyUsage" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-purple-50 dark:bg-purple-900 rounded-lg p-4">
-              <div class="flex items-center">
-                <fa-icon icon="bolt" class="text-purple-600 dark:text-purple-400 text-2xl mr-3"></fa-icon>
-                <div>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Gesamtenergieverbrauch</p>
-                  <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ dailyReport.totalEnergyUsage }}
-                    kWh</p>
-                </div>
+          <div *ngIf="dailyReport.totalEnergyUsage" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+              <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ dailyReport.totalEnergyUsage }}
+                kWh
               </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Gesamtenergieverbrauch</div>
             </div>
 
-            <div class="bg-indigo-50 dark:bg-indigo-900 rounded-lg p-4">
-              <div class="flex items-center">
-                <fa-icon icon="chart-bar" class="text-indigo-600 dark:text-indigo-400 text-2xl mr-3"></fa-icon>
-                <div>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Durchschnitt pro Teil</p>
-                  <p
-                    class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ dailyReport.averageEnergyPerPart }}
-                    kWh</p>
-                </div>
+            <div class="text-center p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+              <div
+                class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ dailyReport.averageEnergyPerPart }}
+                kWh
               </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Durchschnitt pro Teil</div>
             </div>
           </div>
         </div>
@@ -159,62 +178,173 @@
     <div *ngIf="activeTab === 'weekly' && !isLoading">
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div class="flex items-center space-x-4">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Woche wählen:</label>
-            <input
-              [(ngModel)]="selectedWeek"
-              (change)="loadWeeklyReports()"
-              type="date"
-              class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+              <fa-icon icon="calendar-week" class="mr-3 text-green-500"></fa-icon>
+              Wochenübersicht
+            </h3>
+            <div class="flex items-center space-x-4">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Woche (Montag):
+              </label>
+              <input
+                [(ngModel)]="selectedWeek"
+                (change)="loadWeeklyReports()"
+                type="date"
+                class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
           </div>
         </div>
 
-        <div class="p-6">
-          <div *ngIf="weeklyReports.length > 0" class="space-y-4">
-            <div *ngFor="let report of weeklyReports"
-                 class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-              <div class="flex items-center space-x-4">
-                <div class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ report.date | date:'EEEE, dd.MM.yyyy' }}
-                </div>
-                <span
-                  class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">
-                  {{ getColorName(report.mostCommonColor) }}
-                </span>
-              </div>
-              <div class="flex items-center space-x-6 text-sm">
-                <div class="text-center">
-                  <div class="font-semibold text-gray-900 dark:text-white">{{ report.partsCount }}</div>
-                  <div class="text-gray-500 dark:text-gray-400">Teile</div>
-                </div>
-                <div *ngIf="report.totalEnergyUsage" class="text-center">
-                  <div class="font-semibold text-gray-900 dark:text-white">{{ report.totalEnergyUsage }} kWh</div>
-                  <div class="text-gray-500 dark:text-gray-400">Energie</div>
-                </div>
-              </div>
+        <!-- No Data Error -->
+        <div *ngIf="weeklyError" class="p-12 text-center">
+          <fa-icon icon="calendar-times" class="text-5xl text-gray-400 mb-4"></fa-icon>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Keine Wochendaten verfügbar</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            Für die ausgewählte Woche sind keine Produktionsdaten vorhanden.
+          </p>
+          <button
+            (click)="loadWeeklyReports()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+            <fa-icon icon="refresh" class="mr-2"></fa-icon>
+            Erneut versuchen
+          </button>
+        </div>
+
+        <div *ngIf="weeklySummary && !weeklyError" class="p-6">
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              Woche {{ weeklySummary.weekStart | date:'dd.MM' }} - {{ weeklySummary.weekEnd | date:'dd.MM.yyyy' }}
+            </h4>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
+            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ weeklySummary.totalParts }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Gesamte Teile</div>
             </div>
 
-            <!-- Weekly Summary -->
-            <div
-              class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900 dark:to-indigo-900 rounded-lg p-6 mt-6">
-              <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Wochenzusammenfassung</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="text-center">
-                  <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ getWeeklyTotal('partsCount') }}
-                  </div>
-                  <div class="text-sm text-gray-600 dark:text-gray-400">Gesamte Teile</div>
-                </div>
-                <div class="text-center">
-                  <div
-                    class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ getWeeklyTotal('totalEnergyUsage') }}
-                    kWh
-                  </div>
-                  <div class="text-sm text-gray-600 dark:text-gray-400">Gesamtenergie</div>
-                </div>
+            <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <div
+                class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ weeklySummary.averagePartsPerDay }}
               </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Ø Teile/Tag</div>
             </div>
+
+            <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+              <div
+                class="text-lg font-bold text-purple-600 dark:text-purple-400">{{ weeklySummary.mostProductiveDay | date:'dd.MM' }}
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Produktivster Tag</div>
+            </div>
+          </div>
+
+          <!-- Daily breakdown table -->
+          <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6">
+            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Tägliche Aufschlüsselung
+            </h4>
+            <div class="overflow-x-auto">
+              <table class="min-w-full">
+                <thead>
+                <tr class="text-left text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <th class="pb-3">Tag</th>
+                  <th class="pb-3">Teile</th>
+                  <th class="pb-3">Häufigste Farbe</th>
+                </tr>
+                </thead>
+                <tbody class="text-sm text-gray-900 dark:text-gray-100">
+                <tr *ngFor="let report of weeklySummary.dailyReports"
+                    class="border-t border-gray-200 dark:border-gray-600">
+                  <td class="py-3 font-medium">{{ formatDate(report.date) }}</td>
+                  <td class="py-3">{{ report.partsCount }}</td>
+                  <td class="py-3">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                  [class]="getColorClass(report.mostCommonColor)">
+              {{ getColorName(report.mostCommonColor) }}
+            </span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monthly Report Tab -->
+    <div *ngIf="activeTab === 'monthly' && !isLoading">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+              <fa-icon icon="calendar-alt" class="mr-3 text-purple-500"></fa-icon>
+              Monatsübersicht
+            </h3>
+            <div class="flex items-center space-x-4">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Monat:
+              </label>
+              <input
+                [(ngModel)]="selectedMonth"
+                (change)="loadMonthlyReports()"
+                type="month"
+                class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+          </div>
+        </div>
+
+        <!-- No Data Error -->
+        <div *ngIf="monthlyError" class="p-12 text-center">
+          <fa-icon icon="calendar-times" class="text-5xl text-gray-400 mb-4"></fa-icon>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Keine Monatsdaten verfügbar</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            Für den ausgewählten Monat sind keine Produktionsdaten vorhanden.
+          </p>
+          <button
+            (click)="loadMonthlyReports()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+            <fa-icon icon="refresh" class="mr-2"></fa-icon>
+            Erneut versuchen
+          </button>
+        </div>
+
+        <div *ngIf="monthlySummary && !monthlyError" class="p-6">
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              {{ getMonthName(monthlySummary.month) }} {{ monthlySummary.year }}
+            </h4>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ monthlySummary.totalParts }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Gesamte Teile</div>
+            </div>
+
+            <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ monthlySummary.workingDays }}
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Arbeitstage</div>
+            </div>
+
+            <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+              <div
+                class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ monthlySummary.averagePartsPerDay }}
+              </div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Ø Teile/Tag</div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6">
+            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Produktivster Tag: {{ formatDate(monthlySummary.mostProductiveDay) }}
+            </h4>
           </div>
         </div>
       </div>
@@ -224,37 +354,100 @@
     <div *ngIf="activeTab === 'colors' && !isLoading">
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Farbverteilung aller Teile</h3>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+            <fa-icon icon="palette" class="mr-3 text-orange-500"></fa-icon>
+            Farbverteilung
+          </h3>
         </div>
 
-        <div class="p-6">
-          <div *ngIf="colorDistribution.length > 0" class="space-y-4">
-            <div *ngFor="let color of colorDistribution"
-                 class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-              <div class="flex items-center space-x-4">
-                <div class="w-6 h-6 rounded-full" [class]="getColorClass(color.color)"></div>
-                <span class="font-medium text-gray-900 dark:text-white">{{ getColorName(color.color) }}</span>
-              </div>
-              <div class="flex items-center space-x-4">
-                <div class="text-right">
-                  <div class="font-semibold text-gray-900 dark:text-white">{{ color.count }} Teile</div>
-                  <div class="text-sm text-gray-500 dark:text-gray-400">{{ color.percentage.toFixed(1) }}%</div>
+        <!-- No Data Error -->
+        <div *ngIf="colorError" class="p-12 text-center">
+          <fa-icon icon="palette" class="text-5xl text-gray-400 mb-4"></fa-icon>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Keine Farbdaten verfügbar</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            Derzeit sind keine Produktionsdaten für die Farbverteilung verfügbar.
+          </p>
+          <button
+            (click)="loadColorDistribution()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+            <fa-icon icon="refresh" class="mr-2"></fa-icon>
+            Erneut laden
+          </button>
+        </div>
+
+        <div *ngIf="colorDistribution.length > 0 && !colorError" class="p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Color Statistics Cards -->
+            <div class="space-y-4">
+              <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Detaillierte Aufschlüsselung
+              </h4>
+
+              <div *ngFor="let color of colorDistribution"
+                   class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                         [style.background-color]="color.color"></div>
+                    <div>
+                      <h5 class="font-semibold text-gray-900 dark:text-white">{{ getColorName(color.color) }}</h5>
+                      <p class="text-sm text-gray-600 dark:text-gray-400">{{ color.count }} Teile</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-xl font-bold text-gray-900 dark:text-white">{{ color.percentage }}%</div>
+                  </div>
                 </div>
-                <div class="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div class="h-2 rounded-full"
-                       [class]="getColorClass(color.color)"
-                       [style.width.%]="color.percentage"></div>
+
+                <!-- Progress Bar -->
+                <div class="mt-3">
+                  <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div class="h-2 rounded-full transition-all duration-500"
+                         [style.width.%]="color.percentage"
+                         [style.background-color]="color.color"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary Statistics -->
+            <div class="space-y-4">
+              <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Zusammenfassung
+              </h4>
+
+              <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div
+                  class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ getTotalColorCount(colorDistribution) }}
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Gesamte Teile</div>
+              </div>
+
+              <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <div class="text-3xl font-bold text-green-600 dark:text-green-400">{{ colorDistribution.length }}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Verschiedene Farben</div>
+              </div>
+
+              <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                <div class="text-xl font-bold text-yellow-600 dark:text-yellow-400">
+                  {{ getColorName(colorDistribution[0].color || '') }}
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Häufigste Farbe</div>
+              </div>
+
+              <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                <div class="flex items-center">
+                  <fa-icon icon="info-circle" class="text-blue-500 mr-2"></fa-icon>
+                  <div>
+                    <p class="text-sm text-blue-700 dark:text-blue-300 font-medium">Analyse-Information</p>
+                    <p class="text-xs text-blue-600 dark:text-blue-400">Basiert auf der gesamten Produktionshistorie</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div *ngIf="colorDistribution.length === 0" class="text-center py-8">
-            <fa-icon icon="chart-bar" class="text-4xl text-gray-400 mb-4"></fa-icon>
-            <p class="text-gray-500 dark:text-gray-400">Keine Farbverteilungsdaten verfügbar</p>
-          </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>

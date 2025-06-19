@@ -2,19 +2,24 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CostPreview, EnergyCost} from '../../models/energy-cost';
 import {interval, Subscription} from 'rxjs';
 import {FormsModule} from '@angular/forms';
-import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {CurrencyPipe, DatePipe, DecimalPipe, NgForOf, NgIf} from '@angular/common';
 import {EnergiekostenService} from '../../services/energiekosten.service';
-import {FaIconComponent, FaIconLibrary} from '@fortawesome/angular-fontawesome';
-import {faBolt, faInfo, faRefresh} from '@fortawesome/free-solid-svg-icons';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {NotificationService} from '../../services/notification.service';
+import {AppComponent} from '../../app.component';
+import {NavigationComponent} from '../navigation/navigation.component';
 
 @Component({
   selector: 'app-energiekosten',
   imports: [
     FormsModule,
-    DatePipe,
     NgIf,
     FaIconComponent,
-    NgForOf
+    NgForOf,
+    NavigationComponent,
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe
   ],
   templateUrl: './energiekosten.component.html',
   styleUrl: './energiekosten.component.css'
@@ -29,9 +34,14 @@ export class EnergiekostenComponent implements OnInit, OnDestroy {
   isLoading = false;
 
   private subscriptions = new Subscription();
+  private app: AppComponent;
 
-  constructor(private energiekostenService: EnergiekostenService, library: FaIconLibrary) {
-    library.addIcons(faInfo, faBolt, faRefresh);
+  constructor(
+    private energiekostenService: EnergiekostenService,
+    private notificationService: NotificationService,
+    app: AppComponent
+  ) {
+    this.app = app;
   }
 
   ngOnInit() {
@@ -43,10 +53,13 @@ export class EnergiekostenComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  public isMainPage() {
+    return this.app._isDashboard;
+  }
+
   private loadData() {
     this.isLoading = true;
     const today = new Date().toISOString().split('T')[0];
-    const weekStart = this.getWeekStart().toISOString().split('T')[0];
 
     // Today's costs
     this.energiekostenService.getDailyCosts(today).subscribe({
@@ -55,33 +68,13 @@ export class EnergiekostenComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error loading today costs:', error);
-      }
-    });
-
-    // Weekly costs
-    this.energiekostenService.getWeeklyCosts(weekStart).subscribe({
-      next: (costs) => {
-        this.weeklyCosts = costs;
-      },
-      error: (error) => {
-        console.error('Error loading weekly costs:', error);
-      }
-    });
-
-    // Current energy price
-    this.energiekostenService.getCurrentEnergyPrice().subscribe({
-      next: (price) => {
-        this.currentEnergyPrice = price;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading energy price:', error);
-        this.isLoading = false;
+        this.notificationService.warning('Tagesdaten', 'Heutige Kostendaten konnten nicht geladen werden.');
       }
     });
 
     // Initial preview
     this.updatePreview();
+    this.isLoading = false;
   }
 
   private startAutoRefresh() {
@@ -92,31 +85,95 @@ export class EnergiekostenComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getWeekStart(): Date {
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-    return new Date(today.setDate(diff));
-  }
-
   updatePreview() {
     if (this.previewCount > 0) {
+      this.isLoading = true;
       this.energiekostenService.getCostPreview(this.previewCount).subscribe({
         next: (preview) => {
           this.costPreview = preview;
+          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error loading cost preview:', error);
+          this.notificationService.warning('Vorschau', 'Produktionsvorschau konnte nicht geladen werden.');
+          this.isLoading = false;
         }
       });
     }
   }
 
-  refreshData() {
-    this.loadData();
+  // Getter für formatierte Zeitschätzung
+  get estimatedStartDate(): string {
+    if (!this.costPreview?.startTimestamp) return '';
+    const date = new Date(this.costPreview.startTimestamp);
+    return new Intl.DateTimeFormat('de-DE', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    }).format(date);
   }
 
-  getWeeklyTotal(field: 'costs' | 'energyUsage'): number {
-    return this.weeklyCosts.reduce((sum, day) => sum + day[field], 0);
+  get estimatedCompletionDate(): string {
+    if (!this.costPreview?.endTimestamp) return '';
+    const date = new Date(this.costPreview.endTimestamp);
+    return new Intl.DateTimeFormat('de-DE', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    }).format(date);
+  }
+
+  loadPreview(count: number) {
+    this.energiekostenService.getCostPreview(count).subscribe(preview => {
+      this.costPreview = preview;
+    });
+  }
+
+  get productionDays(): number {
+    if (!this.costPreview?.hoursNeeded) return 0;
+    return Math.ceil(this.costPreview.hoursNeeded / 24);
+  }
+
+  get costPerPart(): string {
+    if (!this.costPreview?.estimatedCosts || !this.costPreview?.partsCount) return '0,00 €';
+    const cost = this.costPreview.estimatedCosts / this.costPreview.partsCount;
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 4
+    }).format(cost);
+  }
+
+  get isLongProduction(): boolean {
+    return (this.costPreview?.hoursNeeded || 0) > 48;
+  }
+
+  get formattedEstimatedCosts(): string {
+    if (!this.costPreview?.estimatedCosts) return 'Berechnung läuft...';
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 2
+    }).format(this.costPreview.estimatedCosts);
+  }
+
+  get formattedEnergyUsage(): string {
+    if (!this.costPreview?.estimatedEnergyUsage) return '0,0';
+    return new Intl.NumberFormat('de-DE', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    }).format(this.costPreview.estimatedEnergyUsage);
+  }
+
+  get formattedPartsCount(): string {
+    if (!this.costPreview?.partsCount) return '0';
+    return new Intl.NumberFormat('de-DE').format(this.costPreview.partsCount);
+  }
+
+  refreshData() {
+    this.loadData();
   }
 }

@@ -3,9 +3,9 @@ import {Router, RouterModule} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AuthService} from '../../services/auth.service';
 import {CommonModule} from '@angular/common';
-import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {ThemeToggleComponent} from '../theme-toggle/theme-toggle.component';
-import {faCog, faHome, faInfo, faMoon, faRobot, faSun, faUser} from '@fortawesome/free-solid-svg-icons';
+import {NotificationService} from '../../services/notification.service';
 
 @Component({
   selector: 'app-navigation',
@@ -20,10 +20,8 @@ export class NavigationComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    library: FaIconLibrary
+    private notificationService: NotificationService
   ) {
-    library
-      .addIcons(faUser, faRobot, faCog, faSun, faMoon, faInfo, faHome);
 
     this
       .user$ = this.authService.user$;

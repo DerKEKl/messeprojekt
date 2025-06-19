@@ -1,15 +1,19 @@
 export interface EnergyCost {
   date: string;
-  parts: number;
-  costs: number;
-  energyUsage: number;
-  costPerKwh: number;
+  parts: number,
+  costs: number,
+  averagePrice: number,
 }
 
 export interface CostPreview {
+  startTimestamp?: number;
+  endTimestamp?: number;
+  totalPrice?: number | null;
   partsCount: number;
-  estimatedCosts: number;
-  estimatedEnergyUsage: number;
-  optimalProductionTime: string;
-  recommendations: string[];
+  hoursNeeded?: number;
+  estimatedCosts?: number;
+  estimatedEnergyUsage?: number;
+  optimalProductionTime?: string;
+  recommendations?: string[];
+  plannedDate?: string;
 }

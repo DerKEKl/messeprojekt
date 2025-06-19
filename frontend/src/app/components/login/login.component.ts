@@ -1,20 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {AuthService} from '../../services/auth.service';
-import {CommonModule, NgIf} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {ThemeToggleComponent} from '../theme-toggle/theme-toggle.component';
-import {
-  faCog,
-  faEye,
-  faEyeSlash, faInfo,
-  faMoon,
-  faRightFromBracket,
-  faRobot,
-  faSun,
-  faUser
-} from '@fortawesome/free-solid-svg-icons';
+import {NotificationService} from '../../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -34,9 +25,8 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    library: FaIconLibrary,
+    private notificationService: NotificationService
   ) {
-    library.addIcons(faRightFromBracket, faEyeSlash, faEye, faUser, faRobot, faCog, faSun, faMoon, faInfo);
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]

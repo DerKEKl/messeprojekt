@@ -5,16 +5,10 @@ import {Subscription} from 'rxjs';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Part} from '../../models/part';
 import {PartsService} from '../../services/parts.service';
-import {FaIconComponent, FaIconLibrary} from '@fortawesome/angular-fontawesome';
-import {
-  faBolt,
-  faCalendar,
-  faChartBar,
-  faDatabase, faEye,
-  faFilter,
-  faInfo, faPlus,
-  faRefresh, faSearch, faTimes
-} from '@fortawesome/free-solid-svg-icons';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {NotificationService} from '../../services/notification.service';
+import {NavigationComponent} from '../navigation/navigation.component';
+import {AppComponent} from '../../app.component';
 
 @Component({
   selector: 'app-messdaten-liste',
@@ -24,7 +18,9 @@ import {
     ReactiveFormsModule,
     FaIconComponent,
     NgIf,
-    NgForOf
+    NgForOf,
+    NavigationComponent,
+
   ],
   templateUrl: './messdaten-liste.component.html',
   styleUrl: './messdaten-liste.component.css'
@@ -46,9 +42,11 @@ export class MessdatenListeComponent implements OnInit, OnDestroy {
   sortDirection: 'asc' | 'desc' = 'asc';
 
   private subscriptions = new Subscription();
+  private app: AppComponent;
 
-  constructor(private partsService: PartsService, library: FaIconLibrary) {
-    library.addIcons(faInfo, faBolt, faRefresh, faChartBar, faSearch, faFilter, faCalendar, faDatabase, faEye, faTimes, faPlus);
+  constructor(private partsService: PartsService, private notificationService: NotificationService, app: AppComponent
+  ) {
+    this.app = app;
   }
 
   ngOnInit() {
@@ -59,6 +57,10 @@ export class MessdatenListeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+  }
+
+  public isMainPage() {
+    return this.app._isDashboard;
   }
 
   private loadData() {
@@ -116,7 +118,7 @@ export class MessdatenListeComponent implements OnInit, OnDestroy {
     // Datumsfilter
     if (this.selectedDate) {
       filtered = filtered.filter(item =>
-        item.createdAt?.startsWith(this.selectedDate)
+        item.timestamp?.startsWith(this.selectedDate)
       );
     }
 
@@ -181,24 +183,6 @@ export class MessdatenListeComponent implements OnInit, OnDestroy {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
       this.updatePagination();
-    }
-  }
-
-  viewDetails(item: Part) {
-    console.log('View details for:', item);
-  }
-
-  deleteItem(item: Part) {
-    if (confirm(`Möchten Sie das Bauteil ${item.partNumber} wirklich löschen?`)) {
-      this.partsService.deletePart(item.partNumber).subscribe({
-        next: () => {
-          // Daten werden automatisch über parts$ aktualisiert
-        },
-        error: (error: any) => {
-          console.error('Error deleting part:', error);
-          alert('Fehler beim Löschen des Bauteils');
-        }
-      });
     }
   }
 
