@@ -22,6 +22,12 @@ node index.js
 ```
 4. [MQTT](https://github.com/DerKEKl/messeprojekt/blob/f6bc465223dd4ce032be659f889f0c4bc36a275f/mqtt.md)
 
+5. Folgen Sie der Anleitung oder laden Sie das NGINX-Archiv direkt aus dem Release-Bereich herunter:
+[Frontend](https://github.com/DerKEKl/messeprojekt/blob/master/frontend/README.md)
+
+Wenn du magst, kann ich den Stil noch weiter an dein restliches README anpassen (z. B. formeller, technischer oder moderner).
+
+
 ## Komponentenbeschreibung
 
 **Backend (Node.js)**
