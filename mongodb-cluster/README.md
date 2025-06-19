@@ -6,6 +6,8 @@ Das Cluster besteht aus mehreren Komponenten
 * Shard-Server
 * Mongo-Router
   <br>
+  <br>
+  <br>
 ![mongodb-cluster](https://github.com/DerKEKl/messeprojekt/blob/3bf634d2ba132c40ab50c67a56795ea6710bc7b4/mongodb-cluster.jpg)
 
 
