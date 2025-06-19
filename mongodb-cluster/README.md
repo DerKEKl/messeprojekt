@@ -71,7 +71,7 @@ rs.initiate({
 })
 ```
 ## Mongo-Router
-In der `docker-compose.yaml` muss die IP geändert werden <br>
+In der [`docker-compose.yaml`](https://github.com/DerKEKl/messeprojekt/blob/master/mongodb-cluster/mongo_router/docker-compose.yaml) muss die IP geändert werden <br>
 
 Mongo-Router starten
 ```
