@@ -5,7 +5,7 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
-require('dotenv').config({ path: path.join(__dirname, '../.env') })
+require('dotenv').config({ path: path.join(__dirname, '.env') })
 
 const sensorRoutes = require('./routes/sensorRoutes');
 const costsRoutes = require('./routes/costsRoutes');
@@ -22,26 +22,7 @@ mongoose.connect(process.env.MONGO_DB_URL, {
 });
 
 app.use(express.json())
-
-app.use(cors({
-    origin: [
-        'https://localhost:5000',
-        'https://localhost:5001',
-        'http://localhost:5001',
-        'http://localhost:5001'
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-app.use((req, res, next) => {
-    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('X-XSS-Protection', '1; mode=block');
-    next();
-});
+app.use(cors());
 
 app.use('/api/sensor', sensorRoutes);
 app.use('/api/costs', costsRoutes);
