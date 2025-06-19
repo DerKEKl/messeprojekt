@@ -3,11 +3,11 @@ Das Projekt „Messestand“ ist Teil unserer Lernfelder 7 und 8 und soll die im
 Ziel ist es, Themen wie Industrie 4.0, NoSQL oder auch Scrum in diesem Projekt praktisch umzusetzen.
 
 ## Architektur
-* `Datenbank:` Ein MongoDB-Cluster dient der Speicherung der Daten, durch das Cluster mit den einzelnen Replikasets kann eine hohe Verfügbarkeit erreicht werden.
+* `Datenbank:` Ein MongoDB-Cluster dient der Speicherung der Daten, durch das Cluster mit den einzelnen Replikasets kann eine hohe Verfügbarkeit erreicht werden
 * `Backend:` Node.js zur Authentifizerung, Datenverwaltung & Kommunikation
 * `Hardware-Controller` Python dient zur Steuerung des Roboters
 * `Kommunikation` Für die Kommunikation nutzen wir verschiedene Protokolle, OPC UA, MQTT, TCP/IP & REST API
-* `Web-Interface` Das Web-Interface dient sowohl zur Steuerung als auch zur Darstellung einzelner Daten
+* `Web-Interface` Das Web-Interface dient sowohl zur Steuerung als auch zur Darstellung einzelner Daten, verwendet werden Tailwind CSS & Angular
 
 ## Setup
 1. MongoDB Cluster [installieren](https://github.com/DerKEKl/messeprojekt/tree/127c5def0599ca07f45cda321155378ab021de59/mongodb-cluster) mittels Docker Compose
