@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {forkJoin, Observable, of} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {environment} from '../../environments/environment';
+import { Injectable } from '@angular/core';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface DailyReport {
   date: string;
@@ -50,7 +50,6 @@ export class StatisticsService {
   constructor(private http: HttpClient) {
   }
 
-
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
@@ -58,9 +57,24 @@ export class StatisticsService {
     });
   }
 
-
   getDailyReport(date: string): Observable<DailyReport | null> {
-    return this.http.get<DailyReport>(`${this.apiUrl}/report/${date}`, {headers: this.getAuthHeaders()}).pipe(
+    return this.http.get<DailyReport>(`${this.apiUrl}/report/${date}`, { headers: this.getAuthHeaders() }).pipe(
+      switchMap(report => {
+        // Lade die aktuelle Farbverteilung und berechne die häufigste Farbe
+        return this.getColorDistribution().pipe(
+          map(colorDistribution => {
+            if (report && colorDistribution.length > 0) {
+              // Finde die Farbe mit der höchsten Anzahl
+              const mostCommonColorData = colorDistribution.reduce((max, current) =>
+                current.count > max.count ? current : max
+              );
+              report.mostCommonColor = mostCommonColorData.color;
+            }
+            return report;
+          }),
+          catchError(() => of(report)) // Falls Farbverteilung fehlschlägt, verwende Original-Report
+        );
+      }),
       catchError((error) => {
         console.error('Error fetching daily report:', error);
         return of(null);
@@ -163,17 +177,19 @@ export class StatisticsService {
   }
 
   getColorDistribution(): Observable<ColorDistribution[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/colors`, {headers: this.getAuthHeaders()}).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/colors`, { headers: this.getAuthHeaders() }).pipe(
       map(data => {
         // Berechne die Gesamtanzahl aller Teile
         const totalParts = data.reduce((sum, item) => sum + item.count, 0);
 
-        // Berechne die korrekten Prozentsätze
-        return data.map(item => ({
-          color: item.color,
-          count: item.count,
-          percentage: totalParts > 0 ? Math.round((item.count / totalParts) * 100 * 100) / 100 : 0
-        }));
+        // Berechne die korrekten Prozentsätze und sortiere nach Häufigkeit (absteigend)
+        return data
+          .map(item => ({
+            color: item.color,
+            count: item.count,
+            percentage: totalParts > 0 ? Math.round((item.count / totalParts) * 100 * 100) / 100 : 0
+          }))
+          .sort((a, b) => b.count - a.count); // Sortiere nach Anzahl (höchste zuerst)
       }),
       catchError((error) => {
         console.error('Error fetching color distribution:', error);
