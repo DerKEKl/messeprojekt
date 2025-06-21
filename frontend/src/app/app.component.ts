@@ -14,6 +14,7 @@ import {
   faCalendarPlus,
   faCalendarWeek,
   faChartBar,
+  faChartLine,
   faCheck,
   faCheckCircle,
   faClock,
@@ -69,7 +70,7 @@ export class AppComponent implements OnInit {
   title = 'messeprojekt';
   public readonly icons: IconDefinition[] = [faSun, faMoon, faRobot, faUser, faCog, faEye, faEyeSlash, faPlayCircle, faStopCircle,
     faExclamation, faRightFromBracket, faRefresh, faInfo, faBolt, faSort, faPalette, faLightbulb, faEuroSign, faInfoCircle, faExclamationTriangle,
-    faDatabase, faPlay, faStop, faChartBar, faSearch, faFilter, faMicrochip, faCheckCircle, faCalculator, faClock, faSyncAlt, faDownload,
+    faDatabase, faPlay, faStop, faChartBar, faSearch, faFilter, faMicrochip, faCheckCircle, faCalculator, faClock, faSyncAlt, faDownload, faChartLine,
     faCalendar, faPlus, faEdit, faTrash, faCheck, faHome, faTimes, faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faCalendarMinus, faCalendarPlus];
 
   constructor(private themeService: ThemeService, private library: FaIconLibrary, private router: Router) {

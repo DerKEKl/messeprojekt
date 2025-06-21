@@ -11,6 +11,7 @@ import {
   faCalendarPlus,
   faCalendarWeek,
   faChartBar,
+  faChartLine,
   faCheck,
   faCheckCircle,
   faClock,
@@ -61,7 +62,7 @@ export class AppModule {
       faSun, faMoon, faSearch, faFilter, faPlay, faStop, faRefresh, faSort, faPalette, faEuroSign, faPlayCircle,
       faCalendar, faCheck, faTimes, faExclamation, faInfo, faPause, faMicrochip, faCheckCircle, faInfoCircle, faExclamationTriangle,
       faSignOutAlt, faEye, faEyeSlash, faPlus, faEdit, faTrash, faRightFromBracket, faTimes, faCalculator, faClock,
-      faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faCalendarMinus, faCalendarPlus,
+      faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faCalendarMinus, faCalendarPlus, faChartLine,
     );
   }
 }

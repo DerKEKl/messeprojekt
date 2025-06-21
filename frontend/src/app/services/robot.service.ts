@@ -9,7 +9,6 @@ export interface RobotStatus {
   isActive: boolean;
   currentTask?: string;
   lastActivity?: string;
-  totalPartsToday: number;
   errorCount: number;
 }
 
@@ -20,7 +19,6 @@ export class RobotService {
   private baseUrl = `${environment.apiUrl}/robot`;
   private statusSubject = new BehaviorSubject<RobotStatus>({
     isActive: false,
-    totalPartsToday: 0,
     errorCount: 0
   });
 
