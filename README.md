@@ -25,9 +25,6 @@ node index.js
 5. Folgen Sie der Anleitung oder laden Sie das NGINX-Archiv direkt aus dem Release-Bereich herunter:
 [Frontend](https://github.com/DerKEKl/messeprojekt/blob/master/frontend/README.md)
 
-Wenn du magst, kann ich den Stil noch weiter an dein restliches README anpassen (z. B. formeller, technischer oder moderner).
-
-
 ## Komponentenbeschreibung
 
 **Backend (Node.js)**
