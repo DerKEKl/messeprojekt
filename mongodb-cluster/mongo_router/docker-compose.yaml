@@ -8,4 +8,4 @@ services:
     image: mongo:latest
     command: mongos --configdb config_rs/<ip>:10001,<ip>:10002,<ip>:10003 --bind_ip 0.0.0.0 --port 27017
     ports:
-      - 30000:27017
+      - 443:27017
