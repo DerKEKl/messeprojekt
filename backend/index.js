@@ -13,6 +13,7 @@ const statisticsRoutes = require('./routes/statisticsRoutes');
 const partsRoutes = require('./routes/partsRoutes');
 const robotRoutes = require('./routes/robotRoutes')
 const authRoutes = require('./routes/authRoutes')
+const temperatureRoutes = require(`./routes/temperatureRoutes`)
 
 mongoose.connect(process.env.MONGO_DB_URL, {
 }).then(response => {
@@ -30,6 +31,7 @@ app.use('/api/statistics', statisticsRoutes);
 app.use('/api/parts', partsRoutes);
 app.use('/api/robot', robotRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/opcua', temperatureRoutes)
 
 app.get('/api/health', (req, res) => {
     res.json({ 
@@ -58,7 +60,7 @@ function createSelfSignedCertificates() {
     const attrs = [
         { name: 'countryName', value: 'DE' },
         { name: 'organizationName', value: 'Robot Pick and Place System' },
-        { name: 'commonName', value: 'localhost' }
+        { name: 'commonName', value: '10.62.2.240' }
     ];
     
     cert.setSubject(attrs);

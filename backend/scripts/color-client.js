@@ -1,7 +1,7 @@
 const net = require('net');
 
-const HOST = '10.62.4.204'; // Raspberry Pi IP oder localhost
-const PORT = 5000;
+const HOST = '10.62.255.1'; // Raspberry Pi IP oder localhost
+const PORT = 4840;
 
 let rgb = [255, 0, 0];
 
