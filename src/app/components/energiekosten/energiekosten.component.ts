@@ -105,24 +105,26 @@ export class EnergiekostenComponent implements OnInit, OnDestroy {
   // Getter für formatierte Zeitschätzung
   get estimatedStartDate(): string {
     if (!this.costPreview?.startTimestamp) return '';
-    const date = new Date(this.costPreview.startTimestamp);
     return new Intl.DateTimeFormat('de-DE', {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
-      year: 'numeric'
-    }).format(date);
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(this.costPreview.startTimestamp);
   }
 
   get estimatedCompletionDate(): string {
     if (!this.costPreview?.endTimestamp) return '';
-    const date = new Date(this.costPreview.endTimestamp);
     return new Intl.DateTimeFormat('de-DE', {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
-      year: 'numeric'
-    }).format(date);
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(this.costPreview.endTimestamp);
   }
 
   loadPreview(count: number) {

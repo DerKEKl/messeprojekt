@@ -30,6 +30,8 @@ export class EnergiekostenService {
           return of({
             partsCount: count,
             estimatedCosts: 0,
+            startTimestamp: 0,
+            endTimestamp: 0,
             estimatedEnergyUsage: 0,
             optimalProductionTime: 'N/A',
             recommendations: ['Daten nicht verfügbar - Service vorübergehend nicht erreichbar']
@@ -39,20 +41,31 @@ export class EnergiekostenService {
   }
 
   private processPreviewResponse(response: any): CostPreview {
-    let processed: CostPreview;
-    processed = {
-      startTimestamp: response.startTimestamp,
-      endTimestamp: response.endTimestamp,
+    const now = new Date();
+    // Setze Start auf nächste volle Stunde
+    const startTime = new Date(now);
+    startTime.setHours(startTime.getHours() + 1);
+    startTime.setMinutes(0);
+    startTime.setSeconds(0);
+    startTime.setMilliseconds(0);
+
+    // Berechne Endzeit basierend auf den benötigten Stunden
+    const endTime = new Date(startTime);
+    endTime.setHours(endTime.getHours() + (response.hoursNeeded || 0));
+
+    return {
+      startTimestamp: startTime.getTime(),
+      endTimestamp: endTime.getTime(),
       totalPrice: response.totalPrice,
       partsCount: response.partsCount || 0,
       hoursNeeded: response.hoursNeeded || 0,
       estimatedCosts: response.totalPrice || 0,
       estimatedEnergyUsage: this.calculateEnergyUsage(response.hoursNeeded),
-      optimalProductionTime: this.formatProductionTime(response.startTimestamp, response.endTimestamp),
+      optimalProductionTime: this.formatProductionTime(startTime.getTime(), endTime.getTime()),
       recommendations: this.generateRecommendations(response)
     };
-    return processed;
   }
+
 
   private formatProductionTime(startTimestamp?: number, endTimestamp?: number): string {
     if (!startTimestamp || !endTimestamp) {
