@@ -4,7 +4,8 @@
 Das Cluster besteht aus mehreren Komponenten
 * `Konfigurationsserver` speichert die Metadaten für das Cluster und weiß somit wo sich die Daten befinden
 * `Shard-Server` enhält alle Daten die gespeichert wurden
-* `Mongo-Router` ist der Zugangspunk für alle Anfragen an das Cluster
+* `Mongo-Router` ist der Zugangspunk für alle Anfragen an das Cluster <br>
+```Port von Mongo-Router = 443```
   <br>
   <br>
   <br>
@@ -87,7 +88,7 @@ docker-compose -f mongo_router/docker-compose.yaml up -d
 ```
 Shards zum Cluster hinzufügen
 ```
-mongosh mongodb://localhost:30000
+mongosh mongodb://localhost:443
 
 sh.addShard("shard1_rs/<ip>:20001,<ip>:20002,<ip>:20003")
 sh.addShard("shard2_rs/<ip>:20004,<ip>:20005,<ip>:20006")
