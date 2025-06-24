@@ -5,7 +5,7 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
-require('dotenv').config({ path: path.join(__dirname, '.env') })
+require('dotenv').config({ path: path.join(__dirname, '../.env') })
 
 const sensorRoutes = require('./routes/sensorRoutes');
 const costsRoutes = require('./routes/costsRoutes');

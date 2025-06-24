@@ -14,6 +14,7 @@ bot.suck(False)
 def pick():
     print("[AKTION] Greife nach Bauteil...")
     bot.move_to(10, -241, -41, 0, wait=True)
+    bot.move_to(10, -241, -44, 0, wait=True)
     bot.suck(True)
     bot.move_to(250, 0, 50, 0)
     print("[AKTION] Bauteil erfasst.")
@@ -43,9 +44,11 @@ def place(color):
         return
 
     if color == "green":
+        bot.move_to(91, 262, 20, 70, wait=True)
         bot.move_to(155, 245, -20, 0, wait=True)
         bot.suck(False)
         print("[ACTION] Place abgeschlossen.")
+        bot.move_to(91, 262, 20, 70, wait=True)
         bot.move_to(250, 0, 50, 0, wait=True)
         return
     
@@ -57,22 +60,30 @@ def place(color):
         return
     
     if color == "yellow":
+        bot.move_to(91, 262, 20, 70, wait=True)
         bot.move_to(-72, 220, 7, 108, wait=True)
         bot.suck(False)
         print("[ACTION] Place abgeschlossen.")
+        bot.move_to(91, 262, 20, 70, wait=True)
         bot.move_to(250, 0, 50, 0, wait=True)
         return
     
 def programm():
     pick()
     color = getColor()
+    if color == "none":
+        print("[INFO] Kein Bauteil erkannt.")
+        return "none"
     place(color)
     print(f"RESULT:{color}")
 
 def main():
-    programm()
-    programm()
-    programm()
-
+    while True:
+        result = programm()
+        if result == "none":
+            print("[INFO] Keine weiteren Bauteile erkannt. Beende Programm.")
+            break
+        time.sleep(1)
+    
 if __name__ == "__main__":
     main()

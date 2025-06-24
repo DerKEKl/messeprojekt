@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   connected() {
-    return !this.currentTemperature;
+    return this.currentTemperature > 1;
   }
 
   private startDataRefreshInterval() {

@@ -4,7 +4,7 @@ const path = require('path');
 const os = require('os');
 
 // Load environment variables
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 // Import existing Sensor Model instead of creating new one
 const SensorModel = require('../models/sensorModel');

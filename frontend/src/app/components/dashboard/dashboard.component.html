@@ -79,13 +79,6 @@
         <span>{{ isRobotLoading ? 'Wird gestartet...' : 'Roboter starten' }}</span>
       </button>
 
-      <button
-        (click)="stopRobot()"
-        [disabled]="!robotStatus?.isActive || isRobotLoading"
-        class="flex items-center space-x-2 px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors shadow-md hover:shadow-lg disabled:cursor-not-allowed">
-        <fa-icon [icon]="isRobotLoading ? 'refresh' : 'stop'" [class.animate-spin]="isRobotLoading"></fa-icon>
-        <span>{{ isRobotLoading ? 'Wird gestoppt...' : 'Roboter stoppen' }}</span>
-      </button>
 
       <button
         (click)="refreshData()"
