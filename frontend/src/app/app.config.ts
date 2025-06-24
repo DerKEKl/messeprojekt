@@ -1,32 +1,26 @@
-import {ApplicationConfig, ErrorHandler, importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
-import {provideRouter} from '@angular/router';
-import {provideHttpClient} from '@angular/common/http';
-import {routes} from './app.routes';
-import {environment} from '../environments/environment';
-import {MqttModule} from 'ngx-mqtt';
+import { ApplicationConfig, ErrorHandler, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { routes } from './app.routes';
 
 export class GlobalErrorHandler implements ErrorHandler {
   handleError(error: any): void {
     if (error?.message &&
-      (error.message.includes('Mixed Content') ||
+      (error.message.includes('OPC UA') ||
         error.message.includes('WebSocket') ||
-        error.message.includes('mqtt'))) {
-      // Suppress MQTT/Mixed Content errors
-      console.info('MQTT/Mixed Content error suppressed:', error.message);
+        error.message.includes('Connection'))) {
+      console.info('OPC UA Verbindungsfehler:', error.message);
       return;
     }
-    // Handle other errors normally
-    console.error('Unhandled error:', error);
+    console.error('Unbehandelter Fehler:', error);
   }
 }
 
-
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({eventCoalescing: true}),
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
-    importProvidersFrom(MqttModule.forRoot(environment.mqtt)),
-    {provide: ErrorHandler, useClass: GlobalErrorHandler}
+    { provide: ErrorHandler, useClass: GlobalErrorHandler }
   ]
 };

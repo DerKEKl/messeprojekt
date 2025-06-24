@@ -4,7 +4,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {EnergiekostenComponent} from '../energiekosten/energiekosten.component';
 import {ThemeService} from '../../services/theme.service';
 import {RobotService, RobotStatus} from '../../services/robot.service';
-import {MqttClientService, TemperatureData} from '../../services/mqtt-client.service';
+import {MqttClientService} from '../../services/mqtt-client.service';
 import {interval, Subscription} from 'rxjs';
 import {MessdatenListeComponent} from '../messdaten-liste/messdaten-liste.component';
 import {NavigationComponent} from '../navigation/navigation.component';
@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   themeService = inject(ThemeService);
 
   robotStatus: RobotStatus | null = null;
-  currentTemperature: TemperatureData | null = null;
+  currentTemperature: number = 0;
   mqttConnected = false;
   isRobotLoading = false;
   isDataLoading = false;
@@ -59,18 +59,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
 
     // MQTT Connection Status
-    this.subscriptions.add(
-      this.mqttService.connectionStatus$.subscribe(connected => {
-        this.mqttConnected = connected;
-      })
-    );
+    this.mqttConnected = this.mqttService.isConnected();
+    this.currentTemperature = this.mqttService.temperature;
+    this.mqttService.getTemperature().subscribe(temp => {
+      this.currentTemperature = temp;
+    });
 
-    // Temperature Data
-    this.subscriptions.add(
-      this.mqttService.temperature$.subscribe(temp => {
-        this.currentTemperature = temp;
-      })
-    );
+  }
+
+  connected() {
+    return !this.currentTemperature;
   }
 
   private startDataRefreshInterval() {

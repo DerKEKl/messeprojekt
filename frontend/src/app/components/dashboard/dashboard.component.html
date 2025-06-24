@@ -19,7 +19,7 @@
           <div>
             <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Temperatur</p>
             <p class="text-2xl font-bold text-gray-900 dark:text-white">
-              {{ currentTemperature?.value || '--' }}°{{ currentTemperature?.unit || 'C' }}
+              {{ currentTemperature || '--' }}°{{ 'C' }}
             </p>
           </div>
           <div class="p-3 bg-red-100 dark:bg-red-900 rounded-full">
@@ -54,14 +54,14 @@
           <div>
             <p class="text-sm font-medium text-gray-600 dark:text-gray-400">MQTT</p>
             <p class="text-2xl font-bold text-gray-900 dark:text-white">
-              {{ mqttConnected ? 'Verbunden' : 'Getrennt' }}
+              {{ connected() ? 'Verbunden' : 'Getrennt' }}
             </p>
           </div>
           <div class="p-3 rounded-full"
-               [class]="mqttConnected ? 'bg-green-100 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700'">
+               [class]="connected() ? 'bg-green-100 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700'">
             <fa-icon
               icon="database"
-              [class]="mqttConnected ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'"
+              [class]="connected() ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'"
               class="text-xl">
             </fa-icon>
           </div>
